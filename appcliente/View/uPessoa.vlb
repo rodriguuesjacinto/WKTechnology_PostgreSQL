@@ -6,11 +6,11 @@ Coordinates=272,10,69,36
 Visible=True
 
 []
-Coordinates=105,232,91,36
+Coordinates=205,296,91,36
 Visible=True
 
 [ListPessoas]
-Coordinates=78,1,107,212
+Coordinates=78,1,108,322
 
 [ButtonNovo]
 Coordinates=204,65,82,58
@@ -28,5 +28,8 @@ Coordinates=379,1,78,36
 Coordinates=204,142,91,58
 
 [ButtonAtualizar]
-Coordinates=0,0,59,58
+Coordinates=0,0,102,58
+
+[ButtonLote]
+Coordinates=0,0,77,58
 

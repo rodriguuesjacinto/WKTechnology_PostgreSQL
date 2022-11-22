@@ -28,7 +28,7 @@ object FormPessoas: TFormPessoas
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object Button1: TButton
+    object ButtonAtualizar: TButton
       Align = Right
       Images = ImageList1
       ImageIndex = 6
@@ -40,7 +40,7 @@ object FormPessoas: TFormPessoas
       StyleLookup = 'Button1Style1'
       TabOrder = 0
       Text = 'Atualizar'
-      OnClick = Button1Click
+      OnClick = ButtonAtualizarClick
     end
     object ButtonNovo: TButton
       Align = Left

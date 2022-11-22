@@ -66,7 +66,7 @@ object FormPessoaEdit: TFormPessoaEdit
     object Edit_dsdocumento: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 7
-      Text = '284.508.348-30'
+      MaxLength = 20
       Position.X = 16.000000000000000000
       Position.Y = 132.000000000000000000
       Size.Width = 201.000000000000000000
@@ -76,7 +76,7 @@ object FormPessoaEdit: TFormPessoaEdit
     object Edit_nmprimeiro: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 8
-      Text = 'MURILO'
+      MaxLength = 100
       Position.X = 16.000000000000000000
       Position.Y = 180.000000000000000000
       Size.Width = 481.000000000000000000
@@ -86,7 +86,7 @@ object FormPessoaEdit: TFormPessoaEdit
     object Edit_nmsegundo: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 9
-      Text = 'MURILO'
+      MaxLength = 100
       Position.X = 16.000000000000000000
       Position.Y = 228.000000000000000000
       Size.Width = 481.000000000000000000
@@ -97,6 +97,7 @@ object FormPessoaEdit: TFormPessoaEdit
       Date = 44883.000000000000000000
       Position.X = 16.000000000000000000
       Position.Y = 278.000000000000000000
+      ReadOnly = True
       TabOrder = 10
     end
     object Edit_f1natureza: TComboEdit
@@ -141,19 +142,25 @@ object FormPessoaEdit: TFormPessoaEdit
       object Edit_CEP: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         TabOrder = 1
-        Text = '87.520-000'
         Position.X = 87.000000000000000000
         Position.Y = 11.000000000000000000
       end
       object ButtonCEP: TButton
         Position.X = 198.000000000000000000
         Position.Y = 11.000000000000000000
-        Size.Width = 50.000000000000000000
+        Size.Width = 67.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
         Text = 'Incluir'
         OnClick = ButtonCEPClick
+      end
+      object ButtonExcluirCps: TButton
+        Position.X = 284.000000000000000000
+        Position.Y = 11.000000000000000000
+        TabOrder = 3
+        Text = 'Excluir CEP'
+        OnClick = ButtonExcluirCpsClick
       end
     end
     object Label8: TLabel

@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, uModelEnderecoIntegracao, uEnumerador, System.Net.URLClient, System.Net.HttpClient,
-  System.SysUtils, System.Generics.Collections, System.Net.HttpClientComponent,
+  System.SysUtils, System.Generics.Collections, System.Net.HttpClientComponent, uControllerIntegracao,
   System.JSON, FireDAC.Comp.Client, FireDAC.DApt, uModelPessoas, uModelEndereco, uDAOPessoas ;
 
 
@@ -47,9 +47,15 @@ begin
 end;
 
 destructor TControllerLotePessoas.destroy;
+var
+  ControllerIntegracao : TControllerIntegracao ;
 begin
   FreeAndNil(FModelPessoas) ;
   FreeAndNil(FModelEndereco);
+
+  //Inicio a Integração CEPs
+  ControllerIntegracao := TControllerIntegracao.Create ;
+
   inherited;
 end;
 

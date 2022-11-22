@@ -21,41 +21,41 @@ object FormPessoaEdit: TFormPessoaEdit
       Position.X = 16.000000000000000000
       Position.Y = 12.000000000000000000
       Text = 'C'#243'digo'
-      TabOrder = 0
+      TabOrder = 6
     end
     object Label2: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 65.000000000000000000
       Text = 'Natureza'
-      TabOrder = 1
+      TabOrder = 7
     end
     object Label3: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 115.000000000000000000
       Text = 'Documento'
-      TabOrder = 2
+      TabOrder = 8
     end
     object Label4: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 162.000000000000000000
       Text = 'Primeiro Nome'
-      TabOrder = 3
+      TabOrder = 9
     end
     object Label5: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 210.000000000000000000
       Text = 'Segundo Nome (sobrenome)'
-      TabOrder = 4
+      TabOrder = 10
     end
     object Label6: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 260.000000000000000000
       Text = 'Data do Cadastro'
-      TabOrder = 5
+      TabOrder = 11
     end
     object Edit_idpessoa: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 6
+      TabOrder = 0
       Text = '0'
       Position.X = 16.000000000000000000
       Position.Y = 30.000000000000000000
@@ -65,7 +65,7 @@ object FormPessoaEdit: TFormPessoaEdit
     end
     object Edit_dsdocumento: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 7
+      TabOrder = 2
       MaxLength = 20
       Position.X = 16.000000000000000000
       Position.Y = 132.000000000000000000
@@ -75,7 +75,7 @@ object FormPessoaEdit: TFormPessoaEdit
     end
     object Edit_nmprimeiro: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 8
+      TabOrder = 3
       MaxLength = 100
       Position.X = 16.000000000000000000
       Position.Y = 180.000000000000000000
@@ -85,7 +85,7 @@ object FormPessoaEdit: TFormPessoaEdit
     end
     object Edit_nmsegundo: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 9
+      TabOrder = 4
       MaxLength = 100
       Position.X = 16.000000000000000000
       Position.Y = 228.000000000000000000
@@ -98,11 +98,11 @@ object FormPessoaEdit: TFormPessoaEdit
       Position.X = 16.000000000000000000
       Position.Y = 278.000000000000000000
       ReadOnly = True
-      TabOrder = 10
+      TabOrder = 5
     end
     object Edit_f1natureza: TComboEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 11
+      TabOrder = 1
       ItemHeight = 19.000000000000000000
       Items.Strings = (
         'Fisica'
@@ -129,7 +129,7 @@ object FormPessoaEdit: TFormPessoaEdit
       Size.Width = 640.000000000000000000
       Size.Height = 41.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 1
+      TabOrder = 2
       object Label7: TLabel
         Position.X = 8.000000000000000000
         Position.Y = 11.000000000000000000
@@ -183,7 +183,7 @@ object FormPessoaEdit: TFormPessoaEdit
       Size.Width = 640.000000000000000000
       Size.Height = 70.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 2
+      TabOrder = 1
       ItemAppearance.ItemHeight = 20
       ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
         item

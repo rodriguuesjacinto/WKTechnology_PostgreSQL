@@ -15,6 +15,7 @@ type
     FModelEndereco: TModelEndereco;
     FModelPessoas: TModelPessoas;
     FLotePessoasDados : TFDMemTable;
+    FListLotePessoasDados  : TObjectList<TModelPessoas> ;
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
 
@@ -22,6 +23,7 @@ type
      property ModelPessoas    : TModelPessoas  read  FModelPessoas     write FModelPessoas  ;
      property ModelEndereco   : TModelEndereco read  FModelEndereco    write FModelEndereco ;
      property LotePessoasDados: TFDMemTable    read  FLotePessoasDados write FLotePessoasDados ;
+     property ListLotePessoasDados: TObjectList<TModelPessoas>    read  FListLotePessoasDados write FListLotePessoasDados ;
 
      constructor Create  ;
      destructor destroy; override;
@@ -38,6 +40,7 @@ constructor TControllerLotePessoas.Create   ;
 begin
     inherited Create (True);
     FreeOnTerminate := True;
+    FListLotePessoasDados := TObjectList<TModelPessoas>.Create ;
     FModelPessoas  := TModelPessoas.Create  ;
     FModelEndereco := TModelEndereco.Create ;
     FLotePessoasDados := LotePessoasDados   ;
@@ -54,13 +57,11 @@ end;
 procedure TControllerLotePessoas.Execute;
 var
   daoPessoas        : TDAOPessoas ;
-  ListLotePessoasDados  : TObjectList<TModelPessoas> ;
   dsdocumento, nmprimeiro, nmsegundo, ceps : String ;
 begin
 
   NameThreadForDebugging('uControllerIntegracao');
   { Place thread code here }
-  ListLotePessoasDados := TObjectList<TModelPessoas>.Create ;
   daoPessoas := TDAOPessoas.Create ;
   FLotePessoasDados.Open ;
   while not FLotePessoasDados.Eof do
@@ -70,7 +71,7 @@ begin
      nmsegundo    := FLotePessoasDados.FieldByName('nmsegundo').AsString   ;
      ceps         := FLotePessoasDados.FieldByName('ceps').AsString        ;
 
-     ListLotePessoasDados.Add(PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps))  ;
+     PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
 
      FLotePessoasDados.Next ;
   end;
@@ -84,24 +85,27 @@ var
  _ListEnderecos : TStringList ;
  I : Integer ;
 begin
-   FModelPessoas.idpessoa     :=  0     ;
-   if Length(dsdocumento) > 11  then
-      FModelPessoas.f1natureza   :=  0
-   else
-      FModelPessoas.f1natureza   :=  1 ;
-   FModelPessoas.dsdocumento  :=  dsdocumento ;
-   FModelPessoas.nmprimeiro   :=  nmprimeiro    ;
-   FModelPessoas.nmsegundo    :=  nmsegundo     ;
-   FModelPessoas.dtregistro   :=  date()        ;
-   FModelPessoas.enuTipo      :=  uEnumerador.tipoIncluir ;
+   ListLotePessoasDados.add(TModelPessoas.Create) ;
 
+   ListLotePessoasDados[ListLotePessoasDados.Count-1].idpessoa     :=  0     ;
+   if Length(dsdocumento) > 11  then
+      ListLotePessoasDados[ListLotePessoasDados.Count-1].f1natureza   :=  0
+   else
+      ListLotePessoasDados[ListLotePessoasDados.Count-1].f1natureza   :=  1 ;
+   ListLotePessoasDados[ListLotePessoasDados.Count-1].dsdocumento  :=  dsdocumento   ;
+   ListLotePessoasDados[ListLotePessoasDados.Count-1].nmprimeiro   :=  nmprimeiro    ;
+   ListLotePessoasDados[ListLotePessoasDados.Count-1].nmsegundo    :=  nmsegundo     ;
+   ListLotePessoasDados[ListLotePessoasDados.Count-1].dtregistro   :=  Date()        ;
+   ListLotePessoasDados[ListLotePessoasDados.Count-1].enuTipo      :=  uEnumerador.tipoIncluir ;
+
+   _ListEnderecos  := TStringList.Create ;
    ExtractStrings(['|'], [], PChar(ceps), _ListEnderecos);
-   for I := 1 to _ListEnderecos.Count -1 do
+   for I := 0 to _ListEnderecos.Count -1 do
    begin
-         FModelPessoas.dscep.Add(TModelEndereco.Create) ;
-          FModelPessoas.dscep[ModelPessoas.dscep.Count-1].idendereco  := 0   ;
-          FModelPessoas.dscep[ModelPessoas.dscep.Count-1].idpessoa    := 0   ;
-          FModelPessoas.dscep[ModelPessoas.dscep.Count-1].dscep       := _ListEnderecos[I]   ;
+          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Add(TModelEndereco.Create) ;
+          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idendereco  := 0   ;
+          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idpessoa    := 0   ;
+          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].dscep       := _ListEnderecos[I]   ;
    end;
 end;
 

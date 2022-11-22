@@ -27,6 +27,7 @@ type
     ButtonExcluir: TButton;
     StatusBar1: TStatusBar;
     ButtonLote: TButton;
+    ProgressBarAtualizar: TProgressBar;
     procedure ButtonNovoClick(Sender: TObject);
     procedure ButtonAlterarClick(Sender: TObject);
     procedure ButtonLoteClick(Sender: TObject);
@@ -56,7 +57,9 @@ begin
   if Assigned(TThread(Sender).FatalException) then
      ShowMessage(Exception(TThread(Sender).FatalException).Message)  ;
 
-  ListPessoas.EndUpdate ;
+  ProgressBarAtualizar.Visible := False ;
+
+  ListPessoas.Items.EndUpdate ;
   ListPessoas.SetFocus  ;
 end;
 
@@ -136,6 +139,9 @@ begin
 
            TThread.Synchronize(nil , procedure
            begin
+             ProgressBarAtualizar.Visible := True ;
+             ProgressBarAtualizar.Max     := _MemTablePessoas.RecordCount ;
+             ProgressBarAtualizar.Value   := ProgressBarAtualizar.Value + 1 ;
              AddListPessoas(idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco) ;
            end) ;
 
@@ -152,9 +158,9 @@ end;
 
 procedure TFormPessoas.ButtonAtualizarClick(Sender: TObject);
 begin
-  ListPessoas.BeginUpdate ;
-  ListPessoas.Items.Clear ;
-  BuscaWSPessoas          ;
+  ListPessoas.Items.BeginUpdate      ;
+  ListPessoas.Items.Clear            ;
+  BuscaWSPessoas                     ;
 end;
 
 procedure TFormPessoas.ButtonAlterarClick(Sender: TObject);

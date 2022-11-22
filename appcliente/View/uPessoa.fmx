@@ -4,7 +4,7 @@ object FormPessoas: TFormPessoas
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Sistema de Cadastro de Pessoas'
   ClientHeight = 642
-  ClientWidth = 738
+  ClientWidth = 861
   Padding.Left = 5.000000000000000000
   Padding.Top = 5.000000000000000000
   Padding.Right = 5.000000000000000000
@@ -24,7 +24,7 @@ object FormPessoas: TFormPessoas
     Padding.Bottom = 5.000000000000000000
     Position.X = 5.000000000000000000
     Position.Y = 5.000000000000000000
-    Size.Width = 728.000000000000000000
+    Size.Width = 851.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -32,7 +32,7 @@ object FormPessoas: TFormPessoas
       Align = Right
       Images = ImageList1
       ImageIndex = 6
-      Position.X = 637.000000000000000000
+      Position.X = 760.000000000000000000
       Position.Y = 5.000000000000000000
       Size.Width = 86.000000000000000000
       Size.Height = 31.000000000000000000
@@ -117,7 +117,7 @@ object FormPessoas: TFormPessoas
     Padding.Top = 5.000000000000000000
     Padding.Right = 5.000000000000000000
     Padding.Bottom = 5.000000000000000000
-    Size.Width = 728.000000000000000000
+    Size.Width = 851.000000000000000000
     Size.Height = 591.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 3
@@ -127,7 +127,7 @@ object FormPessoas: TFormPessoas
       HeaderAppearanceClassName = 'TListHeaderObjects'
       FooterAppearanceClassName = 'TListHeaderObjects'
       Align = Client
-      Size.Width = 718.000000000000000000
+      Size.Width = 841.000000000000000000
       Size.Height = 581.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -149,7 +149,7 @@ object FormPessoas: TFormPessoas
           Appearance.TextAlign = Leading
           Appearance.Width = 117.000000000000000000
           Appearance.Height = 20.000000000000000000
-          Appearance.PlaceOffset.X = 72.000000000000000000
+          Appearance.PlaceOffset.X = 87.000000000000000000
           Appearance.PlaceOffset.Y = 4.000000000000000000
         end
         item
@@ -158,7 +158,7 @@ object FormPessoas: TFormPessoas
           Appearance.TextAlign = Leading
           Appearance.Width = 244.000000000000000000
           Appearance.Height = 20.000000000000000000
-          Appearance.PlaceOffset.X = 71.000000000000000000
+          Appearance.PlaceOffset.X = 86.000000000000000000
           Appearance.PlaceOffset.Y = 24.000000000000000000
         end
         item
@@ -167,7 +167,7 @@ object FormPessoas: TFormPessoas
           Appearance.TextAlign = Leading
           Appearance.Width = 245.000000000000000000
           Appearance.Height = 20.000000000000000000
-          Appearance.PlaceOffset.X = 70.000000000000000000
+          Appearance.PlaceOffset.X = 85.000000000000000000
           Appearance.PlaceOffset.Y = 44.000000000000000000
         end
         item
@@ -175,7 +175,7 @@ object FormPessoas: TFormPessoas
           AppearanceClassName = 'TTextObjectAppearance'
           Appearance.Font.StyleExt = {00070000000000000004000000}
           Appearance.TextAlign = Leading
-          Appearance.Width = 64.000000000000000000
+          Appearance.Width = 75.000000000000000000
           Appearance.Height = 20.000000000000000000
           Appearance.PlaceOffset.X = 3.000000000000000000
           Appearance.PlaceOffset.Y = 25.000000000000000000
@@ -189,7 +189,7 @@ object FormPessoas: TFormPessoas
           Appearance.Trimming = Word
           Appearance.Width = 558.000000000000000000
           Appearance.Height = 70.000000000000000000
-          Appearance.PlaceOffset.X = 326.000000000000000000
+          Appearance.PlaceOffset.X = 335.000000000000000000
         end
         item
           AppearanceObjectName = 'f1natureza'
@@ -209,11 +209,21 @@ object FormPessoas: TFormPessoas
       object StatusBar1: TStatusBar
         Position.Y = 559.000000000000000000
         ShowSizeGrip = True
-        Size.Width = 718.000000000000000000
+        Size.Width = 841.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
       end
+    end
+    object ProgressBarAtualizar: TProgressBar
+      Align = Top
+      Orientation = Horizontal
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 841.000000000000000000
+      Size.Height = 20.000000000000000000
+      Size.PlatformDefault = False
+      Visible = False
     end
   end
   object ImageList1: TImageList
