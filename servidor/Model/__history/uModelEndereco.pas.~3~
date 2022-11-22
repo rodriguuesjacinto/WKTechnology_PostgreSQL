@@ -1,0 +1,63 @@
+unit uModelEndereco;
+
+interface
+
+uses uEnumerador, System.SysUtils , FireDAC.Comp.Client ;
+
+type
+  TModelEndereco = class
+  private
+      Fidendereco   : Integer ;
+      Fidpessoa     : Integer ;
+      Fdscep        : String  ;
+      FEnumerador   : TEnumerador;
+
+  public
+      property idendereco   : Integer      read  Fidendereco  write Fidendereco   ;
+      property idpessoa     : Integer      read  Fidpessoa    write Fidpessoa     ;
+      property dscep        : String       read  Fdscep       write Fdscep        ;
+      property enuTipo      : TEnumerador  read  FEnumerador  write FEnumerador   ;
+
+      function persistir  : Boolean  ;
+      function selecionar : TFDQuery ;
+
+
+  end;
+
+
+implementation
+ uses  uDAOEndereco ;
+{ TModelPessoas }
+
+
+function TModelEndereco.persistir: Boolean;
+var
+  daoEndereco : TDAOEndereco ;
+begin
+  daoPessoas := TDAOPessoas.Create ;
+  try
+      case FEnumerador of
+        tipoIncluir:
+          result := daoPessoas.incluir(self) ;
+        tipoExcluir:
+          result := daoPessoas.excluir(self) ;
+        tipoAlterar:
+          result := daoPessoas.alterar(self) ;
+      end;
+  finally
+    FreeAndNil(daoPessoas) ;
+  end;
+end;
+
+function TModelEndereco.selecionar: TFDQuery;
+var
+  daoPessoas : TDAOPessoas ;
+begin
+  daoPessoas := TDAOPessoas.Create ;
+  try
+    result := daoPessoas.selecionar(self) ;
+  finally
+    FreeAndNil(daoPessoas) ;
+  end;
+
+end;

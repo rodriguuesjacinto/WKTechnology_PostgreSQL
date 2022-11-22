@@ -1,0 +1,23 @@
+program AppCliente;
+
+uses
+  System.StartUpCopy,
+  FMX.Forms,
+  uPessoa in 'View\uPessoa.pas' {FormPessoas},
+  uPessoaEdit in 'View\uPessoaEdit.pas' {FormPessoaEdit},
+  uPessoaLote in 'View\uPessoaLote.pas' {FormPessoaLote},
+  uFuncoes in 'uFuncoes.pas',
+  uClientModulePessoa in 'Controller\uClientModulePessoa.pas' {ClientModulePessoa: TDataModule},
+  uClientClassesPessoa in 'Model\uClientClassesPessoa.pas',
+  uModelPessoas in 'Model\uModelPessoas.pas',
+  uModelEndereco in 'Model\uModelEndereco.pas',
+  uEnumerador in 'Model\uEnumerador.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TFormPessoas, FormPessoas);
+  Application.CreateForm(TClientModulePessoa, ClientModulePessoa);
+  Application.Run;
+end.

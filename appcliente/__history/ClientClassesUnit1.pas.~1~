@@ -1,0 +1,240 @@
+// 
+// Created by the DataSnap proxy generator.
+// 17/11/2022 19:02:27
+// 
+
+unit ClientClassesUnit1;
+
+interface
+
+uses System.JSON, Datasnap.DSProxyRest, Datasnap.DSClientRest, Data.DBXCommon, Data.DBXClient, Data.DBXDataSnap, Data.DBXJSON, Datasnap.DSProxy, System.Classes, System.SysUtils, Data.DB, Data.SqlExpr, Data.DBXDBReaders, Data.DBXCDSReaders, Data.FireDACJSONReflect, Data.DBXJSONReflect;
+
+type
+
+  IDSRestCachedTFDJSONDataSets = interface;
+
+  TWSPessoasClient = class(TDSAdminRestClient)
+  private
+    FPessoaCommand: TDSRestCommand;
+    FPessoaCommand_Cache: TDSRestCommand;
+    FAcceptPessoaCommand: TDSRestCommand;
+    FAcceptPessoaCommand_Cache: TDSRestCommand;
+    FUpdatePessoaCommand: TDSRestCommand;
+    FUpdatePessoaCommand_Cache: TDSRestCommand;
+    FCancelPessoaCommand: TDSRestCommand;
+    FCancelPessoaCommand_Cache: TDSRestCommand;
+  public
+    constructor Create(ARestConnection: TDSRestConnection); overload;
+    constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
+    destructor Destroy; override;
+    function Pessoa(AID_Pessoa: Integer; const ARequestFilter: string = ''): TFDJSONDataSets;
+    function Pessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string = ''): IDSRestCachedTFDJSONDataSets;
+    function AcceptPessoa(AID_Pessoa: Integer; const ARequestFilter: string = ''): TJSONArray;
+    function AcceptPessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
+    function UpdatePessoa(const ARequestFilter: string = ''): TJSONArray;
+    function UpdatePessoa_Cache(const ARequestFilter: string = ''): IDSRestCachedJSONArray;
+    function CancelPessoa(AID_Pessoa: Integer; const ARequestFilter: string = ''): TJSONArray;
+    function CancelPessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
+  end;
+
+  IDSRestCachedTFDJSONDataSets = interface(IDSRestCachedObject<TFDJSONDataSets>)
+  end;
+
+  TDSRestCachedTFDJSONDataSets = class(TDSRestCachedObject<TFDJSONDataSets>, IDSRestCachedTFDJSONDataSets, IDSRestCachedCommand)
+  end;
+
+const
+  TWSPessoas_Pessoa: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TFDJSONDataSets')
+  );
+
+  TWSPessoas_Pessoa_Cache: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+  TWSPessoas_AcceptPessoa: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TJSONArray')
+  );
+
+  TWSPessoas_AcceptPessoa_Cache: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+  TWSPessoas_UpdatePessoa: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TJSONArray')
+  );
+
+  TWSPessoas_UpdatePessoa_Cache: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+  TWSPessoas_CancelPessoa: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TJSONArray')
+  );
+
+  TWSPessoas_CancelPessoa_Cache: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+implementation
+
+function TWSPessoasClient.Pessoa(AID_Pessoa: Integer; const ARequestFilter: string): TFDJSONDataSets;
+begin
+  if FPessoaCommand = nil then
+  begin
+    FPessoaCommand := FConnection.CreateCommand;
+    FPessoaCommand.RequestType := 'GET';
+    FPessoaCommand.Text := 'TWSPessoas.Pessoa';
+    FPessoaCommand.Prepare(TWSPessoas_Pessoa);
+  end;
+  FPessoaCommand.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FPessoaCommand.Execute(ARequestFilter);
+  if not FPessoaCommand.Parameters[1].Value.IsNull then
+  begin
+    FUnMarshal := TDSRestCommand(FPessoaCommand.Parameters[1].ConnectionHandler).GetJSONUnMarshaler;
+    try
+      Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FPessoaCommand.Parameters[1].Value.GetJSONValue(True)));
+      if FInstanceOwner then
+        FPessoaCommand.FreeOnExecute(Result);
+    finally
+      FreeAndNil(FUnMarshal)
+    end
+  end
+  else
+    Result := nil;
+end;
+
+function TWSPessoasClient.Pessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string): IDSRestCachedTFDJSONDataSets;
+begin
+  if FPessoaCommand_Cache = nil then
+  begin
+    FPessoaCommand_Cache := FConnection.CreateCommand;
+    FPessoaCommand_Cache.RequestType := 'GET';
+    FPessoaCommand_Cache.Text := 'TWSPessoas.Pessoa';
+    FPessoaCommand_Cache.Prepare(TWSPessoas_Pessoa_Cache);
+  end;
+  FPessoaCommand_Cache.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FPessoaCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedTFDJSONDataSets.Create(FPessoaCommand_Cache.Parameters[1].Value.GetString);
+end;
+
+function TWSPessoasClient.AcceptPessoa(AID_Pessoa: Integer; const ARequestFilter: string): TJSONArray;
+begin
+  if FAcceptPessoaCommand = nil then
+  begin
+    FAcceptPessoaCommand := FConnection.CreateCommand;
+    FAcceptPessoaCommand.RequestType := 'GET';
+    FAcceptPessoaCommand.Text := 'TWSPessoas.AcceptPessoa';
+    FAcceptPessoaCommand.Prepare(TWSPessoas_AcceptPessoa);
+  end;
+  FAcceptPessoaCommand.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FAcceptPessoaCommand.Execute(ARequestFilter);
+  Result := TJSONArray(FAcceptPessoaCommand.Parameters[1].Value.GetJSONValue(FInstanceOwner));
+end;
+
+function TWSPessoasClient.AcceptPessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string): IDSRestCachedJSONArray;
+begin
+  if FAcceptPessoaCommand_Cache = nil then
+  begin
+    FAcceptPessoaCommand_Cache := FConnection.CreateCommand;
+    FAcceptPessoaCommand_Cache.RequestType := 'GET';
+    FAcceptPessoaCommand_Cache.Text := 'TWSPessoas.AcceptPessoa';
+    FAcceptPessoaCommand_Cache.Prepare(TWSPessoas_AcceptPessoa_Cache);
+  end;
+  FAcceptPessoaCommand_Cache.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FAcceptPessoaCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedJSONArray.Create(FAcceptPessoaCommand_Cache.Parameters[1].Value.GetString);
+end;
+
+function TWSPessoasClient.UpdatePessoa(const ARequestFilter: string): TJSONArray;
+begin
+  if FUpdatePessoaCommand = nil then
+  begin
+    FUpdatePessoaCommand := FConnection.CreateCommand;
+    FUpdatePessoaCommand.RequestType := 'GET';
+    FUpdatePessoaCommand.Text := 'TWSPessoas.UpdatePessoa';
+    FUpdatePessoaCommand.Prepare(TWSPessoas_UpdatePessoa);
+  end;
+  FUpdatePessoaCommand.Execute(ARequestFilter);
+  Result := TJSONArray(FUpdatePessoaCommand.Parameters[0].Value.GetJSONValue(FInstanceOwner));
+end;
+
+function TWSPessoasClient.UpdatePessoa_Cache(const ARequestFilter: string): IDSRestCachedJSONArray;
+begin
+  if FUpdatePessoaCommand_Cache = nil then
+  begin
+    FUpdatePessoaCommand_Cache := FConnection.CreateCommand;
+    FUpdatePessoaCommand_Cache.RequestType := 'GET';
+    FUpdatePessoaCommand_Cache.Text := 'TWSPessoas.UpdatePessoa';
+    FUpdatePessoaCommand_Cache.Prepare(TWSPessoas_UpdatePessoa_Cache);
+  end;
+  FUpdatePessoaCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedJSONArray.Create(FUpdatePessoaCommand_Cache.Parameters[0].Value.GetString);
+end;
+
+function TWSPessoasClient.CancelPessoa(AID_Pessoa: Integer; const ARequestFilter: string): TJSONArray;
+begin
+  if FCancelPessoaCommand = nil then
+  begin
+    FCancelPessoaCommand := FConnection.CreateCommand;
+    FCancelPessoaCommand.RequestType := 'GET';
+    FCancelPessoaCommand.Text := 'TWSPessoas.CancelPessoa';
+    FCancelPessoaCommand.Prepare(TWSPessoas_CancelPessoa);
+  end;
+  FCancelPessoaCommand.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FCancelPessoaCommand.Execute(ARequestFilter);
+  Result := TJSONArray(FCancelPessoaCommand.Parameters[1].Value.GetJSONValue(FInstanceOwner));
+end;
+
+function TWSPessoasClient.CancelPessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string): IDSRestCachedJSONArray;
+begin
+  if FCancelPessoaCommand_Cache = nil then
+  begin
+    FCancelPessoaCommand_Cache := FConnection.CreateCommand;
+    FCancelPessoaCommand_Cache.RequestType := 'GET';
+    FCancelPessoaCommand_Cache.Text := 'TWSPessoas.CancelPessoa';
+    FCancelPessoaCommand_Cache.Prepare(TWSPessoas_CancelPessoa_Cache);
+  end;
+  FCancelPessoaCommand_Cache.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FCancelPessoaCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedJSONArray.Create(FCancelPessoaCommand_Cache.Parameters[1].Value.GetString);
+end;
+
+constructor TWSPessoasClient.Create(ARestConnection: TDSRestConnection);
+begin
+  inherited Create(ARestConnection);
+end;
+
+constructor TWSPessoasClient.Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean);
+begin
+  inherited Create(ARestConnection, AInstanceOwner);
+end;
+
+destructor TWSPessoasClient.Destroy;
+begin
+  FPessoaCommand.DisposeOf;
+  FPessoaCommand_Cache.DisposeOf;
+  FAcceptPessoaCommand.DisposeOf;
+  FAcceptPessoaCommand_Cache.DisposeOf;
+  FUpdatePessoaCommand.DisposeOf;
+  FUpdatePessoaCommand_Cache.DisposeOf;
+  FCancelPessoaCommand.DisposeOf;
+  FCancelPessoaCommand_Cache.DisposeOf;
+  inherited;
+end;
+
+end.

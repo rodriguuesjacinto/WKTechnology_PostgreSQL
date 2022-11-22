@@ -1,0 +1,28 @@
+unit uModelEndereco;
+
+interface
+
+uses uEnumerador, System.SysUtils  ;
+
+type
+  TModelEndereco = class
+  private
+      Fidendereco   : Integer ;
+      Fidpessoa     : Integer ;
+      Fdscep        : String  ;
+      FEnumerador   : TEnumerador;
+
+  public
+      property idendereco   : Integer      read  Fidendereco  write Fidendereco   ;
+      property idpessoa     : Integer      read  Fidpessoa    write Fidpessoa     ;
+      property dscep        : String       read  Fdscep       write Fdscep        ;
+      property enuTipo      : TEnumerador  read  FEnumerador  write FEnumerador   ;
+
+  end;
+
+
+implementation
+
+{ TModelEndereco }
+
+end.

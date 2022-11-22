@@ -1,0 +1,19 @@
+object ClientModulePessoa: TClientModulePessoa
+  Height = 271
+  Width = 415
+  object DSRestConnection: TDSRestConnection
+    Port = 8080
+    LoginPrompt = False
+    Left = 48
+    Top = 40
+    UniqueId = '{85F3EB48-D450-44E2-BF86-6B6F2380D90E}'
+  end
+  object FDStanStorageBinLink1: TFDStanStorageBinLink
+    Left = 48
+    Top = 176
+  end
+  object FDStanStorageJSONLink1: TFDStanStorageJSONLink
+    Left = 48
+    Top = 112
+  end
+end

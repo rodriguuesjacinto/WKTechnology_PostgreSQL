@@ -1,0 +1,78 @@
+unit ServerMethodsUnit2;
+
+interface
+
+uses System.SysUtils, System.Classes, System.Json,
+    DataSnap.DSProviderDataModuleAdapter,
+    Datasnap.DSServer, Datasnap.DSAuth;
+
+type
+  TServerMethods2 = class(TDSServerModule)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    function EchoString(Value: string): string;
+    function ReverseString(Value: string): string;
+
+     function Pessoa(): TJSONArray ;
+     function AcceptPessoa(const AID_Pessoa: Integer): TJSONArray ;
+     function UpdatePessoa(): TJSONArray ;
+     function CancelPessoa(const AID_Pessoa: Integer): TJSONArray ;
+
+  end;
+
+implementation
+
+{%CLASSGROUP 'System.Classes.TPersistent'}
+
+{$R *.dfm}
+
+uses System.StrUtils;
+
+function TServerMethods2.EchoString(Value: string): string;
+begin
+  Result := Value;
+end;
+
+function TServerMethods2.ReverseString(Value: string): string;
+begin
+  Result := System.StrUtils.ReverseString(Value);
+end;
+
+function TServerMethods2.Pessoa(): TJSONArray;
+//var
+  //controllerClientes : TControllerClientes ;
+begin
+  {  controllerClientes := TControllerClientes.Create;
+    controllerClientes.ModelClientes.intidclientes := AID_Pessoa ;
+
+    // Create dataset list
+    Result := TFDJSONDataSets.Create;
+    // Add departments dataset
+    TFDJSONDataSetsWriter.ListAdd(Result, controllerClientes.selecionar);
+    // Add employees dataset
+    TFDJSONDataSetsWriter.ListAdd(Result, controllerClientes.selecionar); }
+
+    Result := TJSONArray.Create('Menssagem','Consumindo Pessoa') ;
+
+end;
+
+function TServerMethods2.UpdatePessoa: TJSONArray;
+begin
+    Result := TJSONArray.Create('Menssagem','Consumindo UpdatePessoa') ;
+end;
+
+function TServerMethods2.AcceptPessoa(const AID_Pessoa: Integer): TJSONArray;
+begin
+    Result := TJSONArray.Create('Menssagem','Consumindo AcceptPessoa') ;
+end;
+
+function TServerMethods2.CancelPessoa(const AID_Pessoa: Integer): TJSONArray;
+begin
+  Result := TJSONArray.Create('Menssagem','Consumindo CancelPessoa')  ;
+end;
+
+end.
+
+

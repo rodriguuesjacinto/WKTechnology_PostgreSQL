@@ -1,0 +1,74 @@
+unit uModelEnderecoIntegracao;
+
+interface
+
+uses uEnumerador, System.SysUtils , FireDAC.Comp.Client ;
+
+type
+  TModelEnderecoIntegracao = class
+  private
+      Fidendereco    : Integer ;
+      Fdsuf          : String  ;
+      Fnmcidade      : String  ;
+      Fnmbairro      : String  ;
+      Fnmlogradouro  : String  ;
+      Fdscomplemento : String  ;
+      FEnumerador    : TEnumerador;
+
+  public
+      property idendereco    : Integer      read  Fidendereco      write Fidendereco           ;
+      property dsuf          : String       read  Fdsuf            write Fdsuf                 ;
+      property nmcidade      : String       read  Fnmcidade        write Fnmcidade             ;
+      property nmbairro      : String       read  Fnmbairro        write Fnmbairro             ;
+      property nmlogradouro  : String       read  Fnmlogradouro    write Fnmlogradouro         ;
+      property dscomplemento : String       read  Fdscomplemento   write Fdscomplemento        ;
+      property enuTipo       : TEnumerador  read  FEnumerador      write FEnumerador           ;
+
+      function persistir  : Boolean  ;
+      function selecionar : TFDQuery ;
+
+
+  end;
+
+
+implementation
+
+uses  uDAOEndereco ;
+
+{ TModelPessoas }
+
+
+function TModelEnderecoIntegracao.persistir: Boolean;
+var
+  daoEndereco : TDAOEndereco ;
+begin
+  daoEndereco := TDAOEndereco.Create ;
+  try
+      case FEnumerador of
+        tipoIncluir:
+          result := daoEndereco.incluir(self) ;
+        tipoExcluir:
+          result := daoEndereco.excluir(self) ;
+        tipoAlterar:
+          result := daoEndereco.alterar(self) ;
+      end;
+  finally
+    FreeAndNil(daoEndereco) ;
+  end;
+end;
+
+function TModelEnderecoIntegracao.selecionar: TFDQuery;
+var
+  daoEndereco : TDAOEndereco ;
+begin
+  daoEndereco := TDAOEndereco.Create ;
+  try
+    result := daoEndereco.selecionar(self) ;
+  finally
+    FreeAndNil(daoEndereco) ;
+  end;
+
+end;
+
+
+end.

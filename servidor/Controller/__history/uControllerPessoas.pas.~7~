@@ -1,0 +1,50 @@
+unit uControllerPessoas;
+
+interface
+
+uses uModelPessoas, FireDAC.Comp.Client, System.SysUtils, FireDAC.Comp.BatchMove.JSON, Data.FireDACJSONReflect ;
+
+type
+ TControllerPessoas = class
+ private
+    FModelPessoas: TModelPessoas;
+
+ public
+   property ModelPessoas : TModelPessoas read  FModelPessoas write FModelPessoas;
+
+   function persistir  : Boolean ;
+   function selecionar : TFDJSONDataSets ;
+
+   constructor Create;
+   destructor destroy; override;
+
+ end;
+
+implementation
+
+{ TControllerPessoas }
+
+constructor TControllerPessoas.Create;
+begin
+    FModelPessoas := TModelPessoas.Create ;
+    inherited ;
+end;
+
+destructor TControllerPessoas.destroy;
+begin
+  FreeAndNil(FModelPessoas);
+  inherited;
+end;
+
+function TControllerPessoas.persistir: Boolean;
+begin
+  result := FModelPessoas.persistir ;
+end;
+
+function TControllerPessoas.selecionar: TFDJSONDataSets;
+begin
+  result := TFDJSONDataSets.Create ;
+            TFDJSONDataSetsWriter.ListAdd(result,FModelPessoas.selecionar) ;
+end;
+
+end.

@@ -1,0 +1,20 @@
+object ServerContainer2: TServerContainer2
+  Height = 271
+  Width = 415
+  object DSServer1: TDSServer
+    Left = 64
+    Top = 19
+  end
+  object DSHTTPService1: TDSHTTPService
+    HttpPort = 8080
+    Server = DSServer1
+    Filters = <>
+    Left = 176
+    Top = 23
+  end
+  object Pessoa: TDSServerClass
+    OnGetClass = PessoaGetClass
+    Left = 144
+    Top = 144
+  end
+end

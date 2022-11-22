@@ -1,0 +1,72 @@
+unit uModelPessoas;
+
+interface
+
+uses uEnumerador, System.SysUtils , FireDAC.Comp.Client ;
+
+type
+  TModelPessoas = class
+  private
+      Fidpessoa   : Integer ;
+      Ff1natureza : Integer ;
+      Fdsdocumento: String  ;
+      Fnmprimeiro : String  ;
+      Fnmsegundo  : String  ;
+      Fdtregistro : TDate   ;
+      FEnumerador : TEnumerador;
+
+
+  public
+      property idpessoa     : Integer      read  Fidpessoa    write Fidpessoa     ;
+      property f1natureza   : Integer      read  Ff1natureza  write Ff1natureza   ;
+      property dsdocumento  : String       read  Fdsdocumento write Fdsdocumento  ;
+      property nmprimeiro   : String       read  Fnmprimeiro  write Fnmprimeiro   ;
+      property nmsegundo    : String       read  Fnmsegundo   write Fnmsegundo    ;
+      property dtregistro   : TDate        read  Fdtregistro  write Fdtregistro   ;
+      property enuTipo      : TEnumerador  read  FEnumerador  write FEnumerador   ;
+
+      function persistir  : Boolean ;
+      function selecionar : TFDQuery ;
+
+
+  end;
+
+
+implementation
+ uses  uDAOPessoas ;
+{ TModelPessoas }
+
+
+function TModelPessoas.persistir: Boolean;
+var
+  daoPessoas : TDAOPessoas ;
+begin
+  daoPessoas := TDAOPessoas.Create ;
+  try
+      case FEnumerador of
+        tipoIncluir:
+          result := daoPessoas.incluir(self) ;
+        tipoExcluir:
+          result := daoPessoas.excluir(self) ;
+        tipoAlterar:
+          result := daoPessoas.alterar(self) ;
+      end;
+  finally
+    FreeAndNil(daoPessoas) ;
+  end;
+end;
+
+function TModelPessoas.selecionar: TFDQuery;
+var
+  daoPessoas : TDAOPessoas ;
+begin
+  daoPessoas := TDAOPessoas.Create ;
+  try
+    result := daoPessoas.selecionarcliente(self) ;
+  finally
+    FreeAndNil(daoPessoas) ;
+  end;
+
+end;
+
+end.

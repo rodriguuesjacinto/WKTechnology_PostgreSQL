@@ -1,0 +1,70 @@
+unit ClientModuleUnit1;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ClientClassesUnit1, Datasnap.DSClientRest,
+  DataSnap.DSProviderDataModuleAdapter,
+  Datasnap.DSServer, Datasnap.DSAuth,  FireDAC.Comp.BatchMove.JSON, Data.FireDACJSONReflect,
+  FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
+
+type
+  TClientModule1 = class(TDataModule)
+    DSRestConnection1: TDSRestConnection;
+  private
+    FInstanceOwner: Boolean;
+    FWSPessoasClient: TWSPessoasClient;
+    function GetWSPessoasClient: TWSPessoasClient;
+    { Private declarations }
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    property InstanceOwner: Boolean read FInstanceOwner write FInstanceOwner;
+    property WSPessoasClient: TWSPessoasClient read GetWSPessoasClient write FWSPessoasClient;
+
+    function Pessoa(const AID_Pessoa: Integer = 0): TFDMemTable ;
+end;
+
+var
+  ClientModule1: TClientModule1;
+
+implementation
+
+{%CLASSGROUP 'FMX.Controls.TControl'}
+
+{$R *.dfm}
+
+constructor TClientModule1.Create(AOwner: TComponent);
+begin
+  inherited;
+  FInstanceOwner := True;
+end;
+
+destructor TClientModule1.Destroy;
+begin
+  FWSPessoasClient.Free;
+  inherited;
+end;
+
+function TClientModule1.GetWSPessoasClient: TWSPessoasClient;
+begin
+  if FWSPessoasClient = nil then
+    FWSPessoasClient:= TWSPessoasClient.Create(DSRestConnection1, FInstanceOwner);
+  Result := FWSPessoasClient;
+end;
+
+function TClientModule1.Pessoa(const AID_Pessoa: Integer): TFDMemTable ;
+var
+  LDataSetList : TFDJSONDataSets ;
+begin
+  LDataSetList := WSPessoasClient.Pessoa(AID_Pessoa)  ;
+  Result := TFDMemTable.Create() ;
+  Result.Close ;
+  Result.AppendData(TFDJSONDataSetsReader.GetListValue(LDataSetList, 0) ) ;
+  Result.Open ;
+end;
+
+end.

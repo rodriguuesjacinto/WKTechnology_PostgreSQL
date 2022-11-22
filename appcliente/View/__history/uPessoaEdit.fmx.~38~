@@ -1,0 +1,228 @@
+object FormPessoaEdit: TFormPessoaEdit
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
+  Caption = 'Cadastro de Passoa'
+  ClientHeight = 514
+  ClientWidth = 640
+  Position = ScreenCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnActivate = FormActivate
+  DesignerMasterStyle = 0
+  object Panel_dados: TPanel
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 314.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Label1: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 12.000000000000000000
+      Text = 'C'#243'digo'
+      TabOrder = 0
+    end
+    object Label2: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 65.000000000000000000
+      Text = 'Natureza'
+      TabOrder = 1
+    end
+    object Label3: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 115.000000000000000000
+      Text = 'Documento'
+      TabOrder = 2
+    end
+    object Label4: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 162.000000000000000000
+      Text = 'Primeiro Nome'
+      TabOrder = 3
+    end
+    object Label5: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 210.000000000000000000
+      Text = 'Segundo Nome (sobrenome)'
+      TabOrder = 4
+    end
+    object Label6: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 260.000000000000000000
+      Text = 'Data do Cadastro'
+      TabOrder = 5
+    end
+    object Edit_idpessoa: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 6
+      Text = '0'
+      Position.X = 16.000000000000000000
+      Position.Y = 30.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Edit_dsdocumento: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 7
+      MaxLength = 20
+      Position.X = 16.000000000000000000
+      Position.Y = 132.000000000000000000
+      Size.Width = 201.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Edit_nmprimeiro: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 8
+      MaxLength = 100
+      Position.X = 16.000000000000000000
+      Position.Y = 180.000000000000000000
+      Size.Width = 481.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Edit_nmsegundo: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 9
+      MaxLength = 100
+      Position.X = 16.000000000000000000
+      Position.Y = 228.000000000000000000
+      Size.Width = 481.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Edit_dtregistro: TDateEdit
+      Date = 44883.000000000000000000
+      Position.X = 16.000000000000000000
+      Position.Y = 278.000000000000000000
+      ReadOnly = True
+      TabOrder = 10
+    end
+    object Edit_f1natureza: TComboEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 11
+      ItemHeight = 19.000000000000000000
+      Items.Strings = (
+        'Fisica'
+        'Juridica')
+      ItemIndex = 0
+      Text = 'Fisica'
+      Position.X = 16.000000000000000000
+      Position.Y = 85.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object Panel_cep: TPanel
+    Align = Top
+    Padding.Bottom = 5.000000000000000000
+    Position.Y = 314.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 139.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Panel3: TPanel
+      Align = Top
+      Size.Width = 640.000000000000000000
+      Size.Height = 41.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object Label7: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 11.000000000000000000
+        Size.Width = 81.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Digite o CEP :'
+        TabOrder = 0
+      end
+      object Edit_CEP: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 1
+        Position.X = 87.000000000000000000
+        Position.Y = 11.000000000000000000
+      end
+      object ButtonCEP: TButton
+        Position.X = 198.000000000000000000
+        Position.Y = 11.000000000000000000
+        Size.Width = 50.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = 'Incluir'
+        OnClick = ButtonCEPClick
+      end
+      object ButtonExcluirCps: TButton
+        Position.X = 284.000000000000000000
+        Position.Y = 11.000000000000000000
+        TabOrder = 3
+        Text = 'Excluir CEP'
+        OnClick = ButtonExcluirCpsClick
+      end
+    end
+    object Label8: TLabel
+      Align = Top
+      Margins.Left = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 41.000000000000000000
+      Size.Width = 630.000000000000000000
+      Size.Height = 23.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Endere'#231'os cadastrados'
+      TabOrder = 0
+    end
+    object ListViewEndereco: TListView
+      ItemAppearanceClassName = 'TDynamicAppearance'
+      ItemEditAppearanceClassName = 'TDynamicAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      Align = Client
+      Size.Width = 640.000000000000000000
+      Size.Height = 70.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      ItemAppearance.ItemHeight = 20
+      ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'endereco'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.TextAlign = Leading
+          Appearance.Width = 619.000000000000000000
+          Appearance.Height = 43.000000000000000000
+        end>
+      ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'Text1'
+          AppearanceClassName = 'TTextObjectAppearance'
+        end>
+    end
+  end
+  object ButtonCancelar: TButton
+    Align = Center
+    Margins.Left = -100.000000000000000000
+    TabOrder = 3
+    Text = 'Cancelar'
+    OnClick = ButtonCancelarClick
+  end
+  object ButtonConfirmar: TButton
+    Align = Center
+    Margins.Left = 100.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'Confirmar'
+    OnClick = ButtonConfirmarClick
+  end
+  object StatusBar1: TStatusBar
+    Position.Y = 497.000000000000000000
+    ShowSizeGrip = True
+    Size.Width = 640.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 13
+  end
+end
