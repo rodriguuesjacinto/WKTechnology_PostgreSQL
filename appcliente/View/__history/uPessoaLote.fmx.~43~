@@ -5,10 +5,13 @@ object FormPessoaLote: TFormPessoaLote
   Caption = 'Cadastro de Pessoas em Lote'
   ClientHeight = 614
   ClientWidth = 973
+  Cursor = crHandPoint
   Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   DesignerMasterStyle = 0
   object StatusBar1: TStatusBar
     Position.Y = 592.000000000000000000
@@ -66,20 +69,22 @@ object FormPessoaLote: TFormPessoaLote
       Images = ImageList1
       ImageIndex = 2
       Position.X = 792.000000000000000000
-      Position.Y = 30.000000000000000000
+      Position.Y = 32.000000000000000000
       Size.Width = 167.000000000000000000
       Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
-      Text = 'Iniciar Cadastro em Lote'
+      Text = 'Enviar Cadastro em Lote'
+      OnClick = ButtonExportaLoteClick
     end
     object ButtoVerificar: TButton
       Images = ImageList1
       ImageIndex = 1
       Position.X = 653.000000000000000000
       Position.Y = 33.000000000000000000
-      TabOrder = 5
-      Text = 'Verificar'
+      TabOrder = 4
+      Text = 'Preparar'
+      OnClick = ButtoVerificarClick
     end
   end
   object PanelCentro: TPanel
@@ -94,15 +99,28 @@ object FormPessoaLote: TFormPessoaLote
     TabOrder = 1
     object Label1: TLabel
       Align = Top
+      Cursor = crHandPoint
       StyledSettings = [Family, Size, FontColor]
       Position.X = 10.000000000000000000
       Position.Y = 10.000000000000000000
       Size.Width = 953.000000000000000000
-      Size.Height = 20.000000000000000000
+      Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       Text = 'Visualiza'#231#227'o do Arquivo'
       TabOrder = 0
+      object SpeedButton1: TSpeedButton
+        StyledSettings = [Family, Size]
+        Position.X = 176.000000000000000000
+        Position.Y = -2.000000000000000000
+        Size.Width = 201.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        Text = '{ Click aqui para ver o exemplo }'
+        TextSettings.Font.StyleExt = {04040000000000000004000000}
+        TextSettings.FontColor = claBlue
+        OnClick = SpeedButton1Click
+      end
     end
     object ListViewArquivo: TListView
       ItemAppearanceClassName = 'TDynamicAppearance'
@@ -111,7 +129,7 @@ object FormPessoaLote: TFormPessoaLote
       FooterAppearanceClassName = 'TListHeaderObjects'
       Align = Client
       Size.Width = 953.000000000000000000
-      Size.Height = 450.000000000000000000
+      Size.Height = 448.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       ItemAppearance.ItemHeight = 30
@@ -177,7 +195,7 @@ object FormPessoaLote: TFormPessoaLote
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.HorzAlign = Center
         Text = 'Verificando estrutura do arquivo ...'
-        TabOrder = 66
+        TabOrder = 65
       end
     end
   end

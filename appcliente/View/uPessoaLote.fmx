@@ -195,15 +195,15 @@ object FormPessoaLote: TFormPessoaLote
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.HorzAlign = Center
         Text = 'Verificando estrutura do arquivo ...'
-        TabOrder = 65
+        TabOrder = 66
       end
     end
   end
   object OpenArquivo: TOpenDialog
     Filter = 'csv|*.csv|txt|*.txt'
     FilterIndex = 3
-    Left = 530
-    Top = 175
+    Left = 466
+    Top = 247
   end
   object ImageList1: TImageList
     Source = <
@@ -310,7 +310,7 @@ object FormPessoaLote: TFormPessoaLote
             Name = '45'
           end>
       end>
-    Left = 416
-    Top = 176
+    Left = 336
+    Top = 240
   end
 end

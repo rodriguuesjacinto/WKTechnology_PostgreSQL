@@ -58,8 +58,7 @@ begin
   FreeAndNil(FModelEndereco);
 
   //Inicio a Integração CEPs
-  if FExecutarControllerIntegracao then
-     ControllerIntegracao := TControllerIntegracao.Create ;
+  ControllerIntegracao := TControllerIntegracao.Create ;
 
   inherited;
 end;
