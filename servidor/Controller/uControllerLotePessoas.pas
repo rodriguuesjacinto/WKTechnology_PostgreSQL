@@ -17,6 +17,7 @@ type
     FLotePessoasDados : TFDMemTable;
     FListLotePessoasDados  : TObjectList<TModelPessoas> ;
     FListaMemTableIntegrar : TObjectList<TFDMemTable>   ;
+
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
 
@@ -57,7 +58,8 @@ begin
   FreeAndNil(FModelEndereco);
 
   //Inicio a Integração CEPs
-  //ControllerIntegracao := TControllerIntegracao.Create ;
+  if FExecutarControllerIntegracao then
+     ControllerIntegracao := TControllerIntegracao.Create ;
 
   inherited;
 end;

@@ -30,6 +30,7 @@ type
     OpenArquivo: TOpenDialog;
     ButtonExportaLote: TButton;
     ButtoVerificar: TButton;
+    SpeedButton1: TSpeedButton;
     procedure Button_arquivoClick(Sender: TObject);
     procedure MontaListaArquivo(const _Path_ArquivoLote : string) ;
     procedure AddListViewArquivo(const dsdocumento, nmprimeiro, nmsegundo, ceps : string) ;
@@ -37,6 +38,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ButtonExportaLoteClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
     function ValidaDados(const dsdocumento, nmprimeiro, nmsegundo, ceps : string): Boolean ;
@@ -55,6 +57,8 @@ var
 implementation
 
 {$R *.fmx}
+
+uses uPessoaLoteExemplo;
 
 function TFormPessoaLote.GetStrNumber(const S: string): string;
 var
@@ -258,6 +262,16 @@ begin
 
   _TThread.OnTerminate := TThreadEnd ;
   _TThread.Start ;
+end;
+
+procedure TFormPessoaLote.SpeedButton1Click(Sender: TObject);
+begin
+  FormPessoaLoteExemplo := TFormPessoaLoteExemplo.create ( nil );
+  try
+    FormPessoaLoteExemplo.ShowModal ;
+  finally
+    FreeAndNil(FormPessoaLoteExemplo)
+  end;
 end;
 
 end.

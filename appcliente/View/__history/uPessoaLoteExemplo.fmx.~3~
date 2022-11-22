@@ -1,0 +1,11 @@
+object FormPessoaLoteExemplo: TFormPessoaLoteExemplo
+  Left = 0
+  Top = 0
+  Caption = 'Exemplo de arquivo de importa'#231#227'o.'
+  ClientHeight = 480
+  ClientWidth = 1045
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+end

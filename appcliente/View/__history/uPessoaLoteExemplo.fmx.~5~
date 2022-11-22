@@ -1,0 +1,76 @@
+object FormPessoaLoteExemplo: TFormPessoaLoteExemplo
+  Left = 0
+  Top = 0
+  Caption = 'Exemplo de arquivo de importa'#231#227'o.'
+  ClientHeight = 488
+  ClientWidth = 1030
+  Padding.Left = 5.000000000000000000
+  Padding.Top = 5.000000000000000000
+  Padding.Right = 5.000000000000000000
+  Padding.Bottom = 5.000000000000000000
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      
+        '000.000.000-00;ROBERTO;RODRIGUES JACINTO;87520-000;87120-000;879' +
+        '65-369'
+      
+        '111.111.111-11;ROBERTO;RODRIGUES JACINTO;87520-000;87120-000;879' +
+        '65-369;25896-326'
+      '222.222.222-22;ROBERTO;RODRIGUES JACINTO;87520-000;'
+      '333.333.333-33;ROBERTO;RODRIGUES JACINTO;87520-000;87120-000')
+    ReadOnly = True
+    StyledSettings = [Family, FontColor]
+    TextSettings.Font.Size = 24.000000000000000000
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+    Align = Client
+    Size.Width = 1020.000000000000000000
+    Size.Height = 358.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Viewport.Width = 1016.000000000000000000
+    Viewport.Height = 354.000000000000000000
+  end
+  object Panel1: TPanel
+    Align = Top
+    Padding.Left = 5.000000000000000000
+    Padding.Top = 5.000000000000000000
+    Padding.Right = 5.000000000000000000
+    Padding.Bottom = 5.000000000000000000
+    Position.X = 5.000000000000000000
+    Position.Y = 5.000000000000000000
+    Size.Width = 1020.000000000000000000
+    Size.Height = 120.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Label1: TLabel
+      StyledSettings = [Family, FontColor]
+      Size.Width = 401.000000000000000000
+      Size.Height = 65.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 22.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Exemplo do arquivo para importa'#231#227'o.'
+      TabOrder = 2
+    end
+    object Label2: TLabel
+      StyledSettings = [Family, FontColor]
+      Position.X = 1.000000000000000000
+      Position.Y = 91.000000000000000000
+      Size.Width = 803.000000000000000000
+      Size.Height = 37.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 14.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 
+        'Documento (CPF ou CNPJ ); Primeiro Nome;Segundo Nome            ' +
+        '                    ; ceps pode ser varios separados por ;'
+      TabOrder = 1
+    end
+  end
+end

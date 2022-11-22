@@ -148,6 +148,10 @@
         <DCCReference Include="Model\uModelEndereco.pas"/>
         <DCCReference Include="Model\uEnumerador.pas"/>
         <DCCReference Include="Model\uClientClassesPessoa.pas"/>
+        <DCCReference Include="View\uPessoaLoteExemplo.pas">
+            <Form>FormPessoaLoteExemplo</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

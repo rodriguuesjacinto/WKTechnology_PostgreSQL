@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{5842CB9E-8F15-4B2E-AA8E-0C2C40B02DA0}</ProjectGuid>
         <ProjectVersion>19.5</ProjectVersion>
-        <FrameworkType>None</FrameworkType>
+        <FrameworkType>FMX</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>

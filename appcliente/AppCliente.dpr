@@ -10,7 +10,8 @@ uses
   uModelPessoas in 'Model\uModelPessoas.pas',
   uModelEndereco in 'Model\uModelEndereco.pas',
   uEnumerador in 'Model\uEnumerador.pas',
-  uClientClassesPessoa in 'Model\uClientClassesPessoa.pas';
+  uClientClassesPessoa in 'Model\uClientClassesPessoa.pas',
+  uPessoaLoteExemplo in 'View\uPessoaLoteExemplo.pas' {FormPessoaLoteExemplo};
 
 {$R *.res}
 
