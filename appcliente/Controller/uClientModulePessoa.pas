@@ -35,7 +35,7 @@ type
     function AcceptPessoa(ModelPessoas: TModelPessoas): boolean ;
     function UpdatePessoa(ModelPessoas: TModelPessoas): boolean ;
     function CancelPessoa(ModelPessoas: TModelPessoas): boolean ;
-    function LotePessoa(PacotePessoas: TFDMemTable): boolean;
+    function LotePessoa(_LDataSetList  : TFDJSONDataSets): boolean;
 
 end;
 
@@ -180,13 +180,9 @@ begin
   end;
 end;
 
-function TClientModulePessoa.LotePessoa(PacotePessoas: TFDMemTable) : boolean ;
-var
-   _LDataSetList      : TFDJSONDataSets ;
+function TClientModulePessoa.LotePessoa(_LDataSetList  : TFDJSONDataSets) : boolean ;
 begin
   try
-    _LDataSetList := TFDJSONDataSets.Create ;
-                     TFDJSONDataSetsWriter.ListAdd(_LDataSetList,PacotePessoas)  ;
     WSPessoasClient.LotePessoa(_LDataSetList) ;
     Result := True ;
   finally

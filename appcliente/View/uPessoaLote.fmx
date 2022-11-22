@@ -68,7 +68,7 @@ object FormPessoaLote: TFormPessoaLote
       Images = ImageList1
       ImageIndex = 2
       Position.X = 792.000000000000000000
-      Position.Y = 30.000000000000000000
+      Position.Y = 32.000000000000000000
       Size.Width = 167.000000000000000000
       Size.Height = 25.000000000000000000
       Size.PlatformDefault = False

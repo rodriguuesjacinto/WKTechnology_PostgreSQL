@@ -16,6 +16,7 @@ type
     FModelPessoas: TModelPessoas;
     FLotePessoasDados : TFDMemTable;
     FListLotePessoasDados  : TObjectList<TModelPessoas> ;
+    FListaMemTableIntegrar : TObjectList<TFDMemTable>   ;
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
 
@@ -23,7 +24,8 @@ type
      property ModelPessoas    : TModelPessoas  read  FModelPessoas     write FModelPessoas  ;
      property ModelEndereco   : TModelEndereco read  FModelEndereco    write FModelEndereco ;
      property LotePessoasDados: TFDMemTable    read  FLotePessoasDados write FLotePessoasDados ;
-     property ListLotePessoasDados: TObjectList<TModelPessoas>    read  FListLotePessoasDados write FListLotePessoasDados ;
+     property ListLotePessoasDados : TObjectList<TModelPessoas>   read  FListLotePessoasDados  write FListLotePessoasDados ;
+     property ListaMemTableIntegrar: TObjectList<TFDMemTable>     read  FListaMemTableIntegrar write FListaMemTableIntegrar ;
 
      constructor Create  ;
      destructor destroy; override;
@@ -41,6 +43,7 @@ begin
     inherited Create (True);
     FreeOnTerminate := True;
     FListLotePessoasDados := TObjectList<TModelPessoas>.Create ;
+    FListaMemTableIntegrar:= TObjectList<TFDMemTable>.Create   ;
     FModelPessoas  := TModelPessoas.Create  ;
     FModelEndereco := TModelEndereco.Create ;
     FLotePessoasDados := LotePessoasDados   ;
@@ -54,7 +57,7 @@ begin
   FreeAndNil(FModelEndereco);
 
   //Inicio a Integração CEPs
-  ControllerIntegracao := TControllerIntegracao.Create ;
+  //ControllerIntegracao := TControllerIntegracao.Create ;
 
   inherited;
 end;
@@ -64,26 +67,32 @@ procedure TControllerLotePessoas.Execute;
 var
   daoPessoas        : TDAOPessoas ;
   dsdocumento, nmprimeiro, nmsegundo, ceps : String ;
+  I : Integer ;
 begin
 
   NameThreadForDebugging('uControllerIntegracao');
   { Place thread code here }
   daoPessoas := TDAOPessoas.Create ;
-  FLotePessoasDados.Open ;
-  while not FLotePessoasDados.Eof do
-  begin
-     dsdocumento  := FLotePessoasDados.FieldByName('dsdocumento').AsString ;
-     nmprimeiro   := FLotePessoasDados.FieldByName('nmprimeiro').AsString  ;
-     nmsegundo    := FLotePessoasDados.FieldByName('nmsegundo').AsString   ;
-     ceps         := FLotePessoasDados.FieldByName('ceps').AsString        ;
+     for I := 0 to FListaMemTableIntegrar.Count - 1 do
+     begin
+        FListaMemTableIntegrar[I].Open ;
+        while not FListaMemTableIntegrar[I].Eof do
+        begin
+           dsdocumento  := FListaMemTableIntegrar[I].FieldByName('dsdocumento').AsString ;
+           nmprimeiro   := FListaMemTableIntegrar[I].FieldByName('nmprimeiro').AsString  ;
+           nmsegundo    := FListaMemTableIntegrar[I].FieldByName('nmsegundo').AsString   ;
+           ceps         := FListaMemTableIntegrar[I].FieldByName('ceps').AsString        ;
 
-     PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
+           PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
 
-     FLotePessoasDados.Next ;
-  end;
+           FListaMemTableIntegrar[I].Next ;
+        end;
 
-  daoPessoas.incluirLote(ListLotePessoasDados) ;
-  FreeOnTerminate := True;
+        daoPessoas.incluirLote(ListLotePessoasDados) ;
+
+     end ;
+
+     FreeOnTerminate := True;
 end;
 
 function TControllerLotePessoas.PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps : String ) : TModelPessoas ;

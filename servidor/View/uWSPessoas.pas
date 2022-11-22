@@ -162,11 +162,16 @@ end;
 procedure TWSPessoas.LotePessoa(const LDataSetList : TFDJSONDataSets) ;
 var
   ControllerLotePessoas : TControllerLotePessoas ;
+  I : Integer ;
 begin
   try
      ControllerLotePessoas := TControllerLotePessoas.Create     ;
-     ControllerLotePessoas.LotePessoasDados := TFDMemTable.Create(nil)  ;
-     ControllerLotePessoas.LotePessoasDados.AppendData(TFDJSONDataSetsReader.GetListValue(LDataSetList, 0)) ;
+     for I := 0 to TFDJSONDataSetsReader.GetListCount(LDataSetList) - 1 do
+     begin
+         ControllerLotePessoas.ListaMemTableIntegrar.Add(TFDMemTable.Create(nil))  ;
+         ControllerLotePessoas.ListaMemTableIntegrar[ControllerLotePessoas.ListaMemTableIntegrar.Count-1].Close ;
+         ControllerLotePessoas.ListaMemTableIntegrar[ControllerLotePessoas.ListaMemTableIntegrar.Count-1].AppendData(TFDJSONDataSetsReader.GetListValue(LDataSetList, I)) ;
+     end;
      ControllerLotePessoas.start ;
   finally
 

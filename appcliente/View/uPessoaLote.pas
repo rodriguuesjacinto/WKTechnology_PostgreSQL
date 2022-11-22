@@ -12,7 +12,7 @@ uses
   FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uModelPessoas, uModelEndereco, FireDAC.Stan.Async, System.Generics.Collections ;
+  FireDAC.Comp.Client, uModelPessoas, uModelEndereco, FireDAC.Stan.Async, System.Generics.Collections;
 
 type
   TFormPessoaLote = class(TForm)
@@ -49,8 +49,9 @@ type
 
 var
   FormPessoaLote : TFormPessoaLote;
-  ListaMemTableIntegrar  : TObjectList<TFDMemTable>      ;
-  _MemTableIntegrar: TFDMemTable     ;
+  ListaMemTableIntegrar  : TObjectList<TFDMemTable>       ;
+  LDataSetListLote       : TFDJSONDataSets                ;
+  _MemTableIntegrar      : TFDMemTable                    ;
 implementation
 
 {$R *.fmx}
@@ -98,7 +99,7 @@ end;
 procedure TFormPessoaLote.ButtonExportaLoteClick(Sender: TObject);
 begin
 
-   if ClientModulePessoa.LotePessoa(_MemTableIntegrar) then
+   if ClientModulePessoa.LotePessoa(LDataSetListLote) then
    begin
       ShowMessage('Atenção! '+#13+'Pacote de Arquivo enviado para o Servidor.') ;
       ListaMemTableIntegrar.Clear ;
@@ -134,11 +135,13 @@ end;
 
 procedure TFormPessoaLote.FormCreate(Sender: TObject);
 begin
-   ListaMemTableIntegrar :=  TObjectList<TFDMemTable>.Create ;
+    LDataSetListLote      := TFDJSONDataSets.Create ;
+    ListaMemTableIntegrar :=  TObjectList<TFDMemTable>.Create ;
 end;
 
 procedure TFormPessoaLote.FormDestroy(Sender: TObject);
 begin
+   FreeAndNil(LDataSetListLote)          ;
    FreeAndNil(ListaMemTableIntegrar) ;
 end;
 
@@ -153,7 +156,7 @@ begin
   end
   else
   begin
-    Label_progresso.Text      := 'Arquivo preparado para envio em lote.{ Total de registros :'+ FormatFloat('00000',ProgressBar_arquivo.Max) +'}' + ' Número de Pacotes : ' + FormatFloat('000',ListaMemTableIntegrar.Count + 1) ;
+    Label_progresso.Text      := 'Arquivo preparado para envio em lote.{ Total de registros :'+ FormatFloat('00000',ProgressBar_arquivo.Max) +'}' + ' Número de Pacotes : ' + FormatFloat('000',ListaMemTableIntegrar.Count ) ;
     ButtonExportaLote.Enabled := True ;
   end ;
 end;
@@ -164,13 +167,14 @@ var
 begin
   _TThread := TThread.CreateAnonymousThread(procedure
   var
-      I, J : Integer ;
+      I, J , _Pacotes : Integer ;
       LinhaDados , Arquivo : TStringList ;
       dsdocumento, nmprimeiro, nmsegundo, ceps: string ;
   begin
       try
           ListaMemTableIntegrar.Clear ;
           ListViewArquivo.Items.Clear ;
+
           Arquivo           := TStringList.Create;
           LinhaDados        := TStringList.Create;
           _MemTableIntegrar := TFDMemTable.Create(nil);
@@ -192,6 +196,9 @@ begin
               ProgressBar_arquivo.Max   := Arquivo.Count ;
           end ) ;
 
+          _Pacotes :=  Trunc(((Arquivo.Count / 50) + 1)) ;
+          if _Pacotes < 50 then  _Pacotes := 50 ;
+
           for I := 0 to Arquivo.Count -1 do
           begin
               LinhaDados.Clear ;
@@ -211,37 +218,40 @@ begin
                   _MemTableIntegrar.InsertRecord([  dsdocumento, nmprimeiro, nmsegundo, ceps  ]) ;
               end ;
 
-              {
-              _MemTableIntegrar.FieldByName('nmsegundo').AsString ;
-              if _MemTableIntegrar.RecordCount = 100 then
+
+              if _MemTableIntegrar.RecordCount = _Pacotes then
               begin
-                 ListaMemTableIntegrar.Add(TFDMemTable.Create(nil))    ;
-                 ListaMemTableIntegrar[ListaMemTableIntegrar.Count -1].CopyDataSet(_MemTableIntegrar)   ;
+                 ListaMemTableIntegrar.Add(TFDMemTable.Create(nil))        ;
+                 ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].AppendData(_MemTableIntegrar)    ;
+                 ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].open ;
+                 TFDJSONDataSetsWriter.ListAdd(LDataSetListLote,ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1])  ;
                  _MemTableIntegrar.EmptyDataSet ;
               end;
-               }
+
 
               TThread.Synchronize(nil , procedure
               begin
                 AddListViewArquivo(dsdocumento, nmprimeiro, nmsegundo, ceps) ;
                 ProgressBar_arquivo.Value := I + 1 ;
-                Label_progresso.Text      := 'Verificando registros ' + FormatFloat('00000',I) + ' de ' + FormatFloat('00000',Arquivo.Count) + ' .' ;
+                Label_progresso.Text      := 'Verificando registros ' + FormatFloat('00000',I) + ' de ' + FormatFloat('00000',Arquivo.Count-1) + ' .' ;
                 Application.ProcessMessages ;
               end) ;
 
           end;
 
-          {
+
           if _MemTableIntegrar.RecordCount > 0 then
           begin
-                 ListaMemTableIntegrar.Add(_MemTableIntegrar)    ;
-                 ListaMemTableIntegrar[ListaMemTableIntegrar.Count -1].FieldByName('dsdocumento').AsString  ;
+             ListaMemTableIntegrar.Add(TFDMemTable.Create(nil))        ;
+             ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].AppendData(_MemTableIntegrar)    ;
+             ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].open ;
+             TFDJSONDataSetsWriter.ListAdd(LDataSetListLote,ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1])  ;
           end ;
-          }
+
       finally
         FreeAndNil(LinhaDados) ;
         FreeAndNil(Arquivo) ;
-        //FreeAndNil(_MemTableIntegrar) ;
+        FreeAndNil(_MemTableIntegrar) ;
       end;
 
   end) ;
