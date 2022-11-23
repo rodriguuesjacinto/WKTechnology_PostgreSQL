@@ -58,7 +58,7 @@ begin
      ShowMessage(Exception(TThread(Sender).FatalException).Message)  ;
 
   ProgressBarAtualizar.Visible := False ;
-
+  ButtonAtualizar.Enabled := True ;
   ListPessoas.Items.EndUpdate ;
   ListPessoas.SetFocus  ;
 end;
@@ -160,6 +160,7 @@ procedure TFormPessoas.ButtonAtualizarClick(Sender: TObject);
 begin
   ListPessoas.Items.BeginUpdate      ;
   ListPessoas.Items.Clear            ;
+  ButtonAtualizar.Enabled  := False  ;
   BuscaWSPessoas                     ;
 end;
 

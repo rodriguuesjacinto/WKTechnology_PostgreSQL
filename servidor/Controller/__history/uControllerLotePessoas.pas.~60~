@@ -17,6 +17,7 @@ type
     FLotePessoasDados : TFDMemTable;
     FListLotePessoasDados  : TObjectList<TModelPessoas> ;
     FListaMemTableIntegrar : TObjectList<TFDMemTable>   ;
+
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
 
@@ -73,20 +74,19 @@ begin
   NameThreadForDebugging('uControllerIntegracao');
   { Place thread code here }
   daoPessoas := TDAOPessoas.Create ;
-     for I := 0 to ListaMemTableIntegrar.Count - 1 do
+     for I := 0 to FListaMemTableIntegrar.Count - 1 do
      begin
-        FLotePessoasDados.AppendData(ListaMemTableIntegrar[I]) ;
-        FLotePessoasDados.Open ;
-        while not FLotePessoasDados.Eof do
+        FListaMemTableIntegrar[I].Open ;
+        while not FListaMemTableIntegrar[I].Eof do
         begin
-           dsdocumento  := FLotePessoasDados.FieldByName('dsdocumento').AsString ;
-           nmprimeiro   := FLotePessoasDados.FieldByName('nmprimeiro').AsString  ;
-           nmsegundo    := FLotePessoasDados.FieldByName('nmsegundo').AsString   ;
-           ceps         := FLotePessoasDados.FieldByName('ceps').AsString        ;
+           dsdocumento  := FListaMemTableIntegrar[I].FieldByName('dsdocumento').AsString ;
+           nmprimeiro   := FListaMemTableIntegrar[I].FieldByName('nmprimeiro').AsString  ;
+           nmsegundo    := FListaMemTableIntegrar[I].FieldByName('nmsegundo').AsString   ;
+           ceps         := FListaMemTableIntegrar[I].FieldByName('ceps').AsString        ;
 
            PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
 
-           FLotePessoasDados.Next ;
+           FListaMemTableIntegrar[I].Next ;
         end;
 
         daoPessoas.incluirLote(ListLotePessoasDados) ;

@@ -17,6 +17,7 @@ type
     FLotePessoasDados : TFDMemTable;
     FListLotePessoasDados  : TObjectList<TModelPessoas> ;
     FListaMemTableIntegrar : TObjectList<TFDMemTable>   ;
+
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
 
@@ -67,26 +68,32 @@ procedure TControllerLotePessoas.Execute;
 var
   daoPessoas        : TDAOPessoas ;
   dsdocumento, nmprimeiro, nmsegundo, ceps : String ;
+  I : Integer ;
 begin
 
   NameThreadForDebugging('uControllerIntegracao');
   { Place thread code here }
   daoPessoas := TDAOPessoas.Create ;
-  FLotePessoasDados.Open ;
-  while not FLotePessoasDados.Eof do
-  begin
-     dsdocumento  := FLotePessoasDados.FieldByName('dsdocumento').AsString ;
-     nmprimeiro   := FLotePessoasDados.FieldByName('nmprimeiro').AsString  ;
-     nmsegundo    := FLotePessoasDados.FieldByName('nmsegundo').AsString   ;
-     ceps         := FLotePessoasDados.FieldByName('ceps').AsString        ;
+     for I := 0 to FListaMemTableIntegrar.Count - 1 do
+     begin
+        FListaMemTableIntegrar[I].Open ;
+        while not FListaMemTableIntegrar[I].Eof do
+        begin
+           dsdocumento  := FListaMemTableIntegrar[I].FieldByName('dsdocumento').AsString ;
+           nmprimeiro   := FListaMemTableIntegrar[I].FieldByName('nmprimeiro').AsString  ;
+           nmsegundo    := FListaMemTableIntegrar[I].FieldByName('nmsegundo').AsString   ;
+           ceps         := FListaMemTableIntegrar[I].FieldByName('ceps').AsString        ;
 
-     PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
+           PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
 
-     FLotePessoasDados.Next ;
-  end;
+           FListaMemTableIntegrar[I].Next ;
+        end;
 
-  daoPessoas.incluirLote(ListLotePessoasDados) ;
-  FreeOnTerminate := True;
+        daoPessoas.incluirLote(ListLotePessoasDados) ;
+
+     end ;
+
+     FreeOnTerminate := True;
 end;
 
 function TControllerLotePessoas.PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps : String ) : TModelPessoas ;

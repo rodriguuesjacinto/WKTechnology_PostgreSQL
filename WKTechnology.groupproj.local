@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2022/11/17 14:25:02.000.287,D:\WKTechnology_PostgreSQL_\WKTechnology.groupproj=D:\Users\RTI SISTEMAS 01\Documents\Embarcadero\Studio\Projects\ProjectGroup1.groupproj</Transaction>
+    <Transaction>2022/11/17 14:25:02.000.287,D:\Users\RTI SISTEMAS 01\Documents\Embarcadero\Studio\Projects\ProjectGroup1.groupproj=D:\WKTechnology_PostgreSQL_\WKTechnology.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="D:\WKTechnology_PostgreSQL\servidor\ServidorDatasnap.dproj"/>
+		<Projects ActiveProject="D:\WKTechnology_PostgreSQL\appcliente\AppCliente.dproj"/>
 	</Default.Personality>
 </BorlandProject>

@@ -76,6 +76,7 @@ begin
   daoPessoas := TDAOPessoas.Create ;
      for I := 0 to FListaMemTableIntegrar.Count - 1 do
      begin
+        ListLotePessoasDados.Clear ;
         FListaMemTableIntegrar[I].Open ;
         while not FListaMemTableIntegrar[I].Eof do
         begin

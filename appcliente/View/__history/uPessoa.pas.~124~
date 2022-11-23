@@ -27,6 +27,7 @@ type
     ButtonExcluir: TButton;
     StatusBar1: TStatusBar;
     ButtonLote: TButton;
+    ProgressBarAtualizar: TProgressBar;
     procedure ButtonNovoClick(Sender: TObject);
     procedure ButtonAlterarClick(Sender: TObject);
     procedure ButtonLoteClick(Sender: TObject);
@@ -56,7 +57,9 @@ begin
   if Assigned(TThread(Sender).FatalException) then
      ShowMessage(Exception(TThread(Sender).FatalException).Message)  ;
 
-  ListPessoas.EndUpdate ;
+  ProgressBarAtualizar.Visible := False ;
+
+  ListPessoas.Items.EndUpdate ;
   ListPessoas.SetFocus  ;
 end;
 
@@ -81,11 +84,8 @@ var
 begin
   _TThread := TThread.CreateAnonymousThread(procedure
   var
-     ClientModulePessoa : TClientModulePessoa ;
      _MemTablePessoas   : TFDMemTable ;
      _MemTableEndereco  : TFDMemTable ;
-     _DataSetList       : TFDJSONDataSets ;
-     _Enderecos         : String ;
      _EnderecosIntegrado: String ;
      idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco : String ;
   begin
@@ -139,6 +139,9 @@ begin
 
            TThread.Synchronize(nil , procedure
            begin
+             ProgressBarAtualizar.Visible := True ;
+             ProgressBarAtualizar.Max     := _MemTablePessoas.RecordCount ;
+             ProgressBarAtualizar.Value   := ProgressBarAtualizar.Value + 1 ;
              AddListPessoas(idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco) ;
            end) ;
 
@@ -155,9 +158,9 @@ end;
 
 procedure TFormPessoas.ButtonAtualizarClick(Sender: TObject);
 begin
-  ListPessoas.BeginUpdate ;
-  ListPessoas.Items.Clear ;
-  BuscaWSPessoas ;
+  ListPessoas.Items.BeginUpdate      ;
+  ListPessoas.Items.Clear            ;
+  BuscaWSPessoas                     ;
 end;
 
 procedure TFormPessoas.ButtonAlterarClick(Sender: TObject);
@@ -174,15 +177,14 @@ begin
     begin
        FormPessoaEdit.Tag        := 0 ;
        ButtonConfirmar.Text      := 'Alterar' ;
-       Edit_idpessoa.Text        := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('idpessoa')).Text              ;
-       Edit_f1natureza.ItemIndex := strtoint(TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('f1natureza')).Text)  ;
-       Edit_dsdocumento.Text     := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('dsdocumento')).Text           ;
-       Edit_nmprimeiro.Text      := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('nmprimeiro')).Text            ;
-       Edit_nmsegundo.Text       := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('nmsegundo')).Text             ;
-       Edit_dtregistro.Data      := StrToDate(TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('dtregistro')).Text) ;
-      _Enderecos                 := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('endereco')).Text  ;             ;
+       Edit_idpessoa.Text        := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('idpessoa')).Text                 ;
+       Edit_f1natureza.ItemIndex := strtoint(TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('f1natureza')).Text) -1  ;
+       Edit_dsdocumento.Text     := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('dsdocumento')).Text              ;
+       Edit_nmprimeiro.Text      := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('nmprimeiro')).Text               ;
+       Edit_nmsegundo.Text       := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('nmsegundo')).Text                ;
+       Edit_dtregistro.Data      := StrToDate(TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('dtregistro')).Text)    ;
+      _Enderecos                 := TListItemText(ListPessoas.Items[ListPessoas.Selected.Index].Objects.FindDrawable('endereco')).Text  ;              ;
 
-       //_Enderecos := StringReplace(_Enderecos,'#13','|',[rfReplaceAll, rfIgnoreCase])   ;
        ExtractStrings(['|'], [], PChar(_Enderecos), _ListEnderecos);
 
        for I := 1 to _ListEnderecos.Count -1 do

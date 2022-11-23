@@ -44,13 +44,14 @@ begin
        begin
            if listaCeps <> ''  then
              listaCeps := listaCeps + ' , ' ;
-           listaCeps := listaCeps + '"' + _EnderecoColection.dscep + '"' ;
+           listaCeps := listaCeps + QuotedStr( _EnderecoColection.dscep ) ;
        end;
        Query.ExecSQL('delete from endereco e where e.idpessoa = :idpessoa and e.dscep not in ('+ listaCeps +')',[ModelPessoas.idpessoa])  ;
 
        for _EnderecoColection in ModelPessoas.dscep do
        begin
-           Query.ExecSQL('call InsertPessoaEndereco(:idpessoa,:dscep)',[ModelPessoas.idpessoa,_EnderecoColection.dscep ])  ;
+          Query.ExecSQL('insert into endereco (idpessoa,dscep) SELECT :_idpessoa,:_dscep where not exists (select e.idpessoa, e.dscep from endereco e where e.idpessoa = :_idpessoa and e.dscep = :_dscep )',
+                        [ModelPessoas.idpessoa,_EnderecoColection.dscep ])  ;
        end;
 
     finally
@@ -97,14 +98,15 @@ begin
 
     Query := TControllerConexao.getInstance.daoConexao.criarQrery;
     try
-      Query.Open('insert into pessoa (idpessoa ,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:idpessoa ,:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa  ;',
-                        [ModelPessoas.idpessoa,ModelPessoas.f1natureza, ModelPessoas.dsdocumento, ModelPessoas.nmprimeiro, ModelPessoas.nmsegundo]
-                      ) ;
+      Query.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa  ;',
+                        [ModelPessoas.f1natureza, ModelPessoas.dsdocumento, ModelPessoas.nmprimeiro, ModelPessoas.nmsegundo]
+                ) ;
        ModelPessoas.idpessoa := Query.Fields[0].AsInteger ;
 
        for _EnderecoColection in ModelPessoas.dscep do
        begin
-           Query.ExecSQL('call InsertPessoaEndereco(:idpessoa,:dscep)',[ModelPessoas.idpessoa,_EnderecoColection.dscep ])  ;
+          Query.ExecSQL('insert into endereco (idpessoa,dscep) SELECT :_idpessoa,:_dscep where not exists (select e.idpessoa, e.dscep from endereco e where e.idpessoa = :_idpessoa and e.dscep = :_dscep )',
+                        [ModelPessoas.idpessoa,_EnderecoColection.dscep ])  ;
        end;
     finally
       FreeAndNil(Query) ;
@@ -139,33 +141,33 @@ var
    I : Integer ;
 begin
   try
-    TControllerConexao.getInstance().daoConexao.getConexao.StartTransaction ;
-    Query := TControllerConexao.getInstance.daoConexao.criarQrery;
-    try
-        for I := 0 to ModelPessoasList.Count -1 do
-        begin
+      TControllerConexao.getInstance().daoConexao.getConexao.StartTransaction ;
+      Query := TControllerConexao.getInstance.daoConexao.criarQrery;
+      try
+          for I := 0 to ModelPessoasList.Count -1 do
+          begin
 
-          Query.Open('insert into pessoa (idpessoa ,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:idpessoa ,:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa ;',
-                            [ModelPessoasList.Items[I].idpessoa,ModelPessoasList.Items[I].f1natureza, ModelPessoasList.Items[I].dsdocumento, ModelPessoasList.Items[I].nmprimeiro, ModelPessoasList.Items[I].nmsegundo]
-                          ) ;
-           ModelPessoasList.Items[I].idpessoa := Query.Fields[0].AsInteger ;
+            Query.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa ;',
+                              [ModelPessoasList.Items[I].f1natureza, ModelPessoasList.Items[I].dsdocumento, ModelPessoasList.Items[I].nmprimeiro, ModelPessoasList.Items[I].nmsegundo]
+                            ) ;
+             ModelPessoasList.Items[I].idpessoa := Query.Fields[0].AsInteger ;
 
-           for _EnderecoColection in ModelPessoasList.Items[I].dscep do
-           begin
-               Query.ExecSQL('insert into endereco (idpessoa,dscep) SELECT _idpessoa,_dscep where not exists (select e.idpessoa, e.dscep from endereco e where e.idpessoa = _idpessoa and e.dscep = _dscep )',
-                              [ModelPessoasList.Items[I].idpessoa,_EnderecoColection.dscep, ModelPessoasList.Items[I].idpessoa,_EnderecoColection.dscep ])  ;
-           end;
+             for _EnderecoColection in ModelPessoasList.Items[I].dscep do
+             begin
+                 Query.ExecSQL('insert into endereco (idpessoa,dscep) SELECT :_idpessoa,:_dscep where not exists (select e.idpessoa, e.dscep from endereco e where e.idpessoa = :_idpessoa and e.dscep = :_dscep )',
+                                [ModelPessoasList.Items[I].idpessoa,_EnderecoColection.dscep ])  ;
+             end;
 
-        end;
-    finally
-      FreeAndNil(Query) ;
+          end;
+
+      TControllerConexao.getInstance().daoConexao.getConexao.Commit ;
+      result := true ;
+    except
+      TControllerConexao.getInstance().daoConexao.getConexao.Rollback ;
+      result := false ;
     end;
-
-    TControllerConexao.getInstance().daoConexao.getConexao.Commit ;
-    result := true ;
-  except
-    TControllerConexao.getInstance().daoConexao.getConexao.Rollback ;
-    result := false ;
+  finally
+      FreeAndNil(Query) ;
   end;
 
 end;
