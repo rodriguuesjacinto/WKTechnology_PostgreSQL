@@ -90,7 +90,10 @@ begin
            FListaMemTableIntegrar[I].Next ;
         end;
 
-        daoPessoas.incluirLote(ListLotePessoasDados) ;
+        TThread.Synchronize(nil , procedure
+        begin
+           daoPessoas.incluirLote(ListLotePessoasDados) ;
+        end) ;
 
      end ;
 

@@ -95,9 +95,8 @@ var
 begin
   try
      TControllerConexao.getInstance().daoConexao.getConexao.StartTransaction ;
-
     Query := TControllerConexao.getInstance.daoConexao.criarQrery;
-    try
+    try                                                                                                                                               { select LAST_INSERT_ID() mysql | RETURNING idpessoa PostGres }
       Query.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa  ;',
                         [ModelPessoas.f1natureza, ModelPessoas.dsdocumento, ModelPessoas.nmprimeiro, ModelPessoas.nmsegundo]
                 ) ;
@@ -146,7 +145,7 @@ begin
       try
           for I := 0 to ModelPessoasList.Count -1 do
           begin
-
+                                                                                                                                                                              { select LAST_INSERT_ID() mysql | RETURNING idpessoa PostGres }
             QueryLote.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa ;',
                               [ModelPessoasList.Items[I].f1natureza, ModelPessoasList.Items[I].dsdocumento, ModelPessoasList.Items[I].nmprimeiro, ModelPessoasList.Items[I].nmsegundo]
                             ) ;
