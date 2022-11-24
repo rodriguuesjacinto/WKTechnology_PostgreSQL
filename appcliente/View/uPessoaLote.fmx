@@ -3,8 +3,8 @@ object FormPessoaLote: TFormPessoaLote
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Cadastro de Pessoas em Lote'
-  ClientHeight = 614
-  ClientWidth = 973
+  ClientHeight = 628
+  ClientWidth = 990
   Cursor = crHandPoint
   Position = ScreenCenter
   FormFactor.Width = 320
@@ -14,9 +14,9 @@ object FormPessoaLote: TFormPessoaLote
   OnDestroy = FormDestroy
   DesignerMasterStyle = 0
   object StatusBar1: TStatusBar
-    Position.Y = 592.000000000000000000
+    Position.Y = 606.000000000000000000
     ShowSizeGrip = True
-    Size.Width = 973.000000000000000000
+    Size.Width = 990.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -27,7 +27,7 @@ object FormPessoaLote: TFormPessoaLote
     Padding.Top = 10.000000000000000000
     Padding.Right = 10.000000000000000000
     Padding.Bottom = 10.000000000000000000
-    Size.Width = 973.000000000000000000
+    Size.Width = 990.000000000000000000
     Size.Height = 65.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
@@ -93,8 +93,8 @@ object FormPessoaLote: TFormPessoaLote
     Padding.Top = 10.000000000000000000
     Padding.Right = 10.000000000000000000
     Padding.Bottom = 10.000000000000000000
-    Size.Width = 973.000000000000000000
-    Size.Height = 527.000000000000000000
+    Size.Width = 990.000000000000000000
+    Size.Height = 541.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
     object Label1: TLabel
@@ -102,7 +102,7 @@ object FormPessoaLote: TFormPessoaLote
       StyledSettings = [Family, Size, FontColor]
       Position.X = 10.000000000000000000
       Position.Y = 10.000000000000000000
-      Size.Width = 953.000000000000000000
+      Size.Width = 970.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -128,8 +128,8 @@ object FormPessoaLote: TFormPessoaLote
       HeaderAppearanceClassName = 'TListHeaderObjects'
       FooterAppearanceClassName = 'TListHeaderObjects'
       Align = Client
-      Size.Width = 953.000000000000000000
-      Size.Height = 448.000000000000000000
+      Size.Width = 970.000000000000000000
+      Size.Height = 462.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       ItemAppearance.ItemHeight = 30
@@ -181,14 +181,14 @@ object FormPessoaLote: TFormPessoaLote
       Padding.Bottom = 5.000000000000000000
       Orientation = Horizontal
       Position.X = 10.000000000000000000
-      Position.Y = 480.000000000000000000
-      Size.Width = 953.000000000000000000
+      Position.Y = 494.000000000000000000
+      Size.Width = 970.000000000000000000
       Size.Height = 37.000000000000000000
       Size.PlatformDefault = False
       object Label_progresso: TLabel
         Align = Client
         StyledSettings = [Family]
-        Size.Width = 943.000000000000000000
+        Size.Width = 960.000000000000000000
         Size.Height = 27.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
