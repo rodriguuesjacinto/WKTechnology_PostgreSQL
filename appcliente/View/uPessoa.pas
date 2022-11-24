@@ -106,7 +106,8 @@ begin
         _MemTableEndereco.Open  ;
 
         _Pacotes :=  _MemTablePessoas.RecordCount ;
-        if _Pacotes < 50 then  _Pacotes := 2 ;
+        _Pacotes :=  Trunc(((_MemTablePessoas.RecordCount / 50) + 1)) ;
+        if _Pacotes < 1 then  _Pacotes :=  10 ;
 
         while not _MemTablePessoas.Eof do
         begin
@@ -187,6 +188,9 @@ var
  _ListEnderecos : TStringList ;
  I : Integer ;
 begin
+  if ( ((ListPessoas.Selected = nil)or(ListPessoas.Items.Count = 0)) ) then
+    exit ;
+
   FormPessoaEdit := TFormPessoaEdit.create ( nil );
   try
     // Carrego os Edits com os dados do List
@@ -222,6 +226,9 @@ var
  _ListEnderecos : TStringList ;
  I : Integer ;
 begin
+  if ( ((ListPessoas.Selected = nil)or(ListPessoas.Items.Count = 0)) ) then
+    exit ;
+
   FormPessoaEdit := TFormPessoaEdit.create ( nil );
   try
     // Carrego os Edits com os dados do List

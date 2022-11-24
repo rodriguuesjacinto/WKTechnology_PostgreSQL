@@ -25,9 +25,10 @@ type
     ButtonNovo: TButton;
     ButtonAlterar: TButton;
     ButtonExcluir: TButton;
-    StatusBar1: TStatusBar;
+    StatusBarButton: TStatusBar;
     ButtonLote: TButton;
     ProgressBarAtualizar: TProgressBar;
+    LabelQtdRegistros: TLabel;
     procedure ButtonNovoClick(Sender: TObject);
     procedure ButtonAlterarClick(Sender: TObject);
     procedure ButtonLoteClick(Sender: TObject);
@@ -57,9 +58,11 @@ begin
   if Assigned(TThread(Sender).FatalException) then
      ShowMessage(Exception(TThread(Sender).FatalException).Message)  ;
 
+  ProgressBarAtualizar.Value   := 0 ;
   ProgressBarAtualizar.Visible := False ;
-  ButtonAtualizar.Enabled := True ;
+  ButtonAtualizar.Enabled      := True ;
   ListPessoas.Items.EndUpdate ;
+  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count-1) ;
   ListPessoas.SetFocus  ;
 end;
 
@@ -87,6 +90,7 @@ begin
      _MemTablePessoas   : TFDMemTable ;
      _MemTableEndereco  : TFDMemTable ;
      _EnderecosIntegrado: String ;
+     _Pacotes            : Integer ;
      idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco : String ;
   begin
       try
@@ -100,6 +104,10 @@ begin
         _MemTableEndereco.Close ;
         _MemTableEndereco := ClientModulePessoa.Pessoa()[1] ;
         _MemTableEndereco.Open  ;
+
+        _Pacotes :=  _MemTablePessoas.RecordCount ;
+        _Pacotes :=  Trunc(((_MemTablePessoas.RecordCount / 50) + 1)) ;
+        if _Pacotes < 50 then  _Pacotes :=  10 ;
 
         while not _MemTablePessoas.Eof do
         begin
@@ -145,6 +153,16 @@ begin
              AddListPessoas(idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco) ;
            end) ;
 
+           if _MemTablePessoas.RecordCount = _Pacotes then
+           begin
+               TThread.Synchronize(nil , procedure
+               begin
+                  ListPessoas.Items.EndUpdate  ;
+                  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count-1) ;
+                  ListPessoas.Items.BeginUpdate ;
+               end) ;
+           end;
+
            _MemTablePessoas.Next ;
         end ;
       finally
@@ -170,6 +188,9 @@ var
  _ListEnderecos : TStringList ;
  I : Integer ;
 begin
+  if ( ((ListPessoas.Selected = nil)or(ListPessoas.Items.Count = 0)) ) then
+    exit ;
+
   FormPessoaEdit := TFormPessoaEdit.create ( nil );
   try
     // Carrego os Edits com os dados do List
@@ -205,6 +226,9 @@ var
  _ListEnderecos : TStringList ;
  I : Integer ;
 begin
+  if ( ((ListPessoas.Selected = nil)or(ListPessoas.Items.Count = 0)) ) then
+    exit ;
+
   FormPessoaEdit := TFormPessoaEdit.create ( nil );
   try
     // Carrego os Edits com os dados do List

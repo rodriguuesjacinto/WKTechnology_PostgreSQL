@@ -195,7 +195,7 @@ object FormPessoaLote: TFormPessoaLote
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.HorzAlign = Center
         Text = 'Verificando estrutura do arquivo ...'
-        TabOrder = 66
+        TabOrder = 65
       end
     end
   end

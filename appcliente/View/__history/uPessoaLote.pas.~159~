@@ -30,6 +30,7 @@ type
     OpenArquivo: TOpenDialog;
     ButtonExportaLote: TButton;
     ButtoVerificar: TButton;
+    SpeedButton1: TSpeedButton;
     procedure Button_arquivoClick(Sender: TObject);
     procedure MontaListaArquivo(const _Path_ArquivoLote : string) ;
     procedure AddListViewArquivo(const dsdocumento, nmprimeiro, nmsegundo, ceps : string) ;
@@ -37,6 +38,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ButtonExportaLoteClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
     function ValidaDados(const dsdocumento, nmprimeiro, nmsegundo, ceps : string): Boolean ;
@@ -55,6 +57,8 @@ var
 implementation
 
 {$R *.fmx}
+
+uses uPessoaLoteExemplo;
 
 function TFormPessoaLote.GetStrNumber(const S: string): string;
 var
@@ -156,7 +160,7 @@ begin
   end
   else
   begin
-    Label_progresso.Text      := 'Arquivo preparado para envio em lote.{ Total de registros :'+ FormatFloat('00000',ProgressBar_arquivo.Max) +'}' + ' Número de Pacotes : ' + FormatFloat('000',ListaMemTableIntegrar.Count + 1) ;
+    Label_progresso.Text      := 'Arquivo preparado para envio em lote.{ Total de registros :'+ FormatFloat('00000',ProgressBar_arquivo.Max) +'}' + ' Número de Pacotes : ' + FormatFloat('000',ListaMemTableIntegrar.Count ) ;
     ButtonExportaLote.Enabled := True ;
   end ;
 end;
@@ -196,8 +200,8 @@ begin
               ProgressBar_arquivo.Max   := Arquivo.Count ;
           end ) ;
 
-          _Pacotes :=  Trunc(((Arquivo.Count / 2) + 1)) ;
-          //if _Pacotes < 60 then  _Pacotes := 60 ;
+          _Pacotes :=  Trunc(((Arquivo.Count / 50) + 1)) ;
+          if _Pacotes < 1 then  _Pacotes := 20 ;
 
           for I := 0 to Arquivo.Count -1 do
           begin
@@ -233,7 +237,7 @@ begin
               begin
                 AddListViewArquivo(dsdocumento, nmprimeiro, nmsegundo, ceps) ;
                 ProgressBar_arquivo.Value := I + 1 ;
-                Label_progresso.Text      := 'Verificando registros ' + FormatFloat('00000',I) + ' de ' + FormatFloat('00000',Arquivo.Count) + ' .' ;
+                Label_progresso.Text      := 'Verificando registros ' + FormatFloat('00000',I) + ' de ' + FormatFloat('00000',Arquivo.Count-1) + ' .' ;
                 Application.ProcessMessages ;
               end) ;
 
@@ -258,6 +262,16 @@ begin
 
   _TThread.OnTerminate := TThreadEnd ;
   _TThread.Start ;
+end;
+
+procedure TFormPessoaLote.SpeedButton1Click(Sender: TObject);
+begin
+  FormPessoaLoteExemplo := TFormPessoaLoteExemplo.create ( nil );
+  try
+    FormPessoaLoteExemplo.ShowModal ;
+  finally
+    FreeAndNil(FormPessoaLoteExemplo)
+  end;
 end;
 
 end.
