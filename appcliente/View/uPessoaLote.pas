@@ -201,7 +201,7 @@ begin
           end ) ;
 
           _Pacotes :=  Trunc(((Arquivo.Count / 50) + 1)) ;
-          if _Pacotes < 1 then  _Pacotes := 25 ;
+          if _Pacotes <= 1 then  _Pacotes := 25 ;
 
           for I := 0 to Arquivo.Count -1 do
           begin

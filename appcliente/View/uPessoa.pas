@@ -62,7 +62,7 @@ begin
   ProgressBarAtualizar.Visible := False ;
   ButtonAtualizar.Enabled      := True ;
   ListPessoas.Items.EndUpdate ;
-  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count-1) ;
+  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count) ;
   ListPessoas.SetFocus  ;
 end;
 
@@ -107,7 +107,7 @@ begin
 
         _Pacotes :=  _MemTablePessoas.RecordCount ;
         _Pacotes :=  Trunc(((_MemTablePessoas.RecordCount / 50) + 1)) ;
-        if _Pacotes < 1 then  _Pacotes :=  10 ;
+        if _Pacotes <= 1 then  _Pacotes :=  10 ;
 
         while not _MemTablePessoas.Eof do
         begin
@@ -158,7 +158,7 @@ begin
                TThread.Synchronize(nil , procedure
                begin
                   ListPessoas.Items.EndUpdate  ;
-                  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count-1) ;
+                  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count) ;
                   ListPessoas.Items.BeginUpdate ;
                end) ;
            end;

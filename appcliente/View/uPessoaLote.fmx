@@ -99,7 +99,6 @@ object FormPessoaLote: TFormPessoaLote
     TabOrder = 1
     object Label1: TLabel
       Align = Top
-      Cursor = crHandPoint
       StyledSettings = [Family, Size, FontColor]
       Position.X = 10.000000000000000000
       Position.Y = 10.000000000000000000
@@ -110,6 +109,7 @@ object FormPessoaLote: TFormPessoaLote
       Text = 'Visualiza'#231#227'o do Arquivo'
       TabOrder = 0
       object SpeedButton1: TSpeedButton
+        Cursor = crHandPoint
         StyledSettings = [Family, Size]
         Position.X = 176.000000000000000000
         Position.Y = -2.000000000000000000
@@ -195,7 +195,7 @@ object FormPessoaLote: TFormPessoaLote
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.HorzAlign = Center
         Text = 'Verificando estrutura do arquivo ...'
-        TabOrder = 65
+        TabOrder = 66
       end
     end
   end
