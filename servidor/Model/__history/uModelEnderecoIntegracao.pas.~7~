@@ -1,0 +1,36 @@
+unit uModelEnderecoIntegracao;
+
+interface
+
+uses uEnumerador, System.SysUtils , FireDAC.Comp.Client ;
+
+type
+  TModelEnderecoIntegracao = class
+  private
+      Fidendereco    : Integer ;
+      Fdsuf          : String  ;
+      Fnmcidade      : String  ;
+      Fnmbairro      : String  ;
+      Fnmlogradouro  : String  ;
+      Fdscomplemento : String  ;
+      FEnumerador    : TEnumerador;
+
+  public
+      property idendereco    : Integer      read  Fidendereco      write Fidendereco           ;
+      property dsuf          : String       read  Fdsuf            write Fdsuf                 ;
+      property nmcidade      : String       read  Fnmcidade        write Fnmcidade             ;
+      property nmbairro      : String       read  Fnmbairro        write Fnmbairro             ;
+      property nmlogradouro  : String       read  Fnmlogradouro    write Fnmlogradouro         ;
+      property dscomplemento : String       read  Fdscomplemento   write Fdscomplemento        ;
+      property enuTipo       : TEnumerador  read  FEnumerador      write FEnumerador           ;
+
+  end;
+
+implementation
+
+uses  uDAOEnderecoIntegracao ;
+
+{ TModelEnderecoIntegracao }
+
+
+end.

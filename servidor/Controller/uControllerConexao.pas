@@ -15,14 +15,15 @@ type
       destructor Destroy ; Override ;
 
       property daoConexao : TDAOConexao read FConexao write FConexao;
-      class function getInstance : TControllerConexao ;
+
+      class function getInstance       : TControllerConexao ;
 
     end;
 
 implementation
 
 var
-  instanciaBD :  TControllerConexao ;
+  instanciaBD        :  TControllerConexao ;
 
 { TControllerConexao }
 
@@ -45,6 +46,7 @@ begin
      instanciaBD := TControllerConexao.Create;
   result := instanciaBD;
 end;
+
 
 initialization
   instanciaBD := nil

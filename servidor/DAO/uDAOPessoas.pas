@@ -15,8 +15,6 @@ type
     function incluir (ModelPessoas : TModelPessoas): Boolean;
     function excluir (ModelPessoas : TModelPessoas): Boolean;
     function alterar (ModelPessoas : TModelPessoas): Boolean;
-    function incluirLote(
-          ModelPessoasList: TObjectList<TModelPessoas>): Boolean;
   end;
 
 implementation
@@ -28,7 +26,7 @@ function TDAOPessoas.alterar(ModelPessoas: TModelPessoas): Boolean;
 var
   Query : TFDQuery ;
   _EnderecoColection : TModelEndereco ;
-   listaCeps : string ;
+   listaCeps  : string ;
 begin
   try
     TControllerConexao.getInstance().daoConexao.getConexao.StartTransaction ;
@@ -92,12 +90,18 @@ function TDAOPessoas.incluir(ModelPessoas: TModelPessoas): Boolean;
 var
   Query : TFDQuery ;
   _EnderecoColection : TModelEndereco ;
+  sqlBuscaID : String  ;
 begin
   try
+      { select LAST_INSERT_ID() mysql | RETURNING idpessoa PostGres }
+      if TControllerConexao.getInstance().daoConexao.getGDBdefault = 'MySQL' then
+         sqlBuscaID := '; select LAST_INSERT_ID();'  else sqlBuscaID := ' RETURNING idpessoa;' ;
+
      TControllerConexao.getInstance().daoConexao.getConexao.StartTransaction ;
     Query := TControllerConexao.getInstance.daoConexao.criarQrery;
-    try                                                                                                                                               { select LAST_INSERT_ID() mysql | RETURNING idpessoa PostGres }
-      Query.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa  ;',
+    try
+
+      Query.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE)' + sqlBuscaID ,
                         [ModelPessoas.f1natureza, ModelPessoas.dsdocumento, ModelPessoas.nmprimeiro, ModelPessoas.nmsegundo]
                 ) ;
        ModelPessoas.idpessoa := Query.Fields[0].AsInteger ;
@@ -129,46 +133,6 @@ begin
   else
      QuerySelecionar.Open('select * from pessoa') ;
   result := QuerySelecionar ;
-end;
-
-function TDAOPessoas.incluirLote(ModelPessoasList: TObjectList<TModelPessoas>): Boolean;
-var
-  QueryLote : TFDQuery ;
-  ModelPessoas       : TModelPessoas  ;
-  _EnderecoColection : TModelEndereco ;
-   listaCeps : string ;
-   I : Integer ;
-begin
-  try
-      TControllerConexao.getInstance().daoConexao.getConexao.StartTransaction ;
-      QueryLote := TControllerConexao.getInstance.daoConexao.criarQrery;
-      try
-          for I := 0 to ModelPessoasList.Count -1 do
-          begin
-                                                                                                                                                                              { select LAST_INSERT_ID() mysql | RETURNING idpessoa PostGres }
-            QueryLote.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) RETURNING idpessoa ;',
-                              [ModelPessoasList.Items[I].f1natureza, ModelPessoasList.Items[I].dsdocumento, ModelPessoasList.Items[I].nmprimeiro, ModelPessoasList.Items[I].nmsegundo]
-                            ) ;
-             ModelPessoasList.Items[I].idpessoa := QueryLote.Fields[0].AsInteger ;
-
-             for _EnderecoColection in ModelPessoasList.Items[I].dscep do
-             begin
-                 QueryLote.ExecSQL('insert into endereco (idpessoa,dscep) SELECT :_idpessoa,:_dscep where not exists (select e.idpessoa, e.dscep from endereco e where e.idpessoa = :_idpessoa and e.dscep = :_dscep )',
-                                [ModelPessoasList.Items[I].idpessoa,_EnderecoColection.dscep ])  ;
-             end;
-
-          end;
-
-      TControllerConexao.getInstance().daoConexao.getConexao.Commit ;
-      result := true ;
-    except
-      TControllerConexao.getInstance().daoConexao.getConexao.Rollback ;
-      result := false ;
-    end;
-  finally
-      FreeAndNil(QueryLote) ;
-  end;
-
 end;
 
 end.

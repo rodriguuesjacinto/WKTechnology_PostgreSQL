@@ -21,9 +21,6 @@ Coordinates=26,251,77,36
 [ButtonAlterar]
 Coordinates=204,219,90,58
 
-[StatusBar1]
-Coordinates=379,1,78,36
-
 [ButtonExcluir]
 Coordinates=204,142,91,58
 
@@ -32,4 +29,12 @@ Coordinates=0,0,102,58
 
 [ButtonLote]
 Coordinates=0,0,77,58
+
+[Module Settings]
+ModelLayerNames=Teste;test2;registros
+
+[StatusBarButton]
+Coordinates=379,1,78,36
+LayerNames=
+Visible=False
 

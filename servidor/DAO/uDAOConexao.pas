@@ -20,10 +20,10 @@ type
 
     function getConexao: TFDConnection;
     function criarQrery: TFDQuery;
-
+    function getGDBdefault: String ;
 
     constructor Create;
-    destructor Destroy; Override;
+    destructor Destroy; Override ;
 
   end;
 
@@ -73,7 +73,7 @@ destructor TDAOConexao.Destroy;
 begin
   inherited;
   FreeAndNil(FConexao);
-  if cGDBdefault = 'postgres' then
+  if cGDBdefault = 'PostgreSQL' then
      FreeAndNil(FDPhysPgDriverLink);
   if cGDBdefault = 'MySQL' then
      FreeAndNil(FMySQLDriverLink);
@@ -82,6 +82,11 @@ end;
 function TDAOConexao.getConexao: TFDConnection;
 begin
   result := FConexao;
+end;
+
+function TDAOConexao.getGDBdefault: String;
+begin
+   result := cGDBdefault ;
 end;
 
 procedure TDAOConexao.LerIni;
@@ -93,23 +98,23 @@ begin
    cGDBdefault := ArquivoINI.ReadString('GDBdefault', 'cGDBdefault', '' );
    if cGDBdefault = 'MySQL' then
    begin
-       cVendorLib := ArquivoINI.ReadString('mysql', 'cVendorLib', '' );
-       cDriverID  := ArquivoINI.ReadString('mysql', 'cDriverID' , '' );
-       cDatabase  := ArquivoINI.ReadString('mysql', 'cDatabase' , '' );
-       cUserName  := ArquivoINI.ReadString('mysql', 'cUserName' , '' );
-       cPassword  := ArquivoINI.ReadString('mysql', 'cPassword' , '' );
-       cPort      := ArquivoINI.ReadString('mysql', 'cPort'     , '' );
-       cServer    := ArquivoINI.ReadString('mysql', 'cServer'   , '' );
+       cVendorLib := ArquivoINI.ReadString('MySQL', 'cVendorLib', '' );
+       cDriverID  := ArquivoINI.ReadString('MySQL', 'cDriverID' , '' );
+       cDatabase  := ArquivoINI.ReadString('MySQL', 'cDatabase' , '' );
+       cUserName  := ArquivoINI.ReadString('MySQL', 'cUserName' , '' );
+       cPassword  := ArquivoINI.ReadString('MySQL', 'cPassword' , '' );
+       cPort      := ArquivoINI.ReadString('MySQL', 'cPort'     , '' );
+       cServer    := ArquivoINI.ReadString('MySQL', 'cServer'   , '' );
    end
    else
    begin
-       cVendorLib := ArquivoINI.ReadString('postgres', 'cVendorLib', '' );
-       cDriverID  := ArquivoINI.ReadString('postgres', 'cDriverID' , '' );
-       cDatabase  := ArquivoINI.ReadString('postgres', 'cDatabase' , '' );
-       cUserName  := ArquivoINI.ReadString('postgres', 'cUserName' , '' );
-       cPassword  := ArquivoINI.ReadString('postgres', 'cPassword' , '' );
-       cPort      := ArquivoINI.ReadString('postgres', 'cPort'     , '' );
-       cServer    := ArquivoINI.ReadString('postgres', 'cServer'   , '' );
+       cVendorLib := ArquivoINI.ReadString('PostgreSQL', 'cVendorLib', '' );
+       cDriverID  := ArquivoINI.ReadString('PostgreSQL', 'cDriverID' , '' );
+       cDatabase  := ArquivoINI.ReadString('PostgreSQL', 'cDatabase' , '' );
+       cUserName  := ArquivoINI.ReadString('PostgreSQL', 'cUserName' , '' );
+       cPassword  := ArquivoINI.ReadString('PostgreSQL', 'cPassword' , '' );
+       cPort      := ArquivoINI.ReadString('PostgreSQL', 'cPort'     , '' );
+       cServer    := ArquivoINI.ReadString('PostgreSQL', 'cServer'   , '' );
    end;
    ArquivoINI.Free ;
 end;

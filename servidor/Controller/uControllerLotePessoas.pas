@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, uModelEnderecoIntegracao, uEnumerador, System.Net.URLClient, System.Net.HttpClient,
   System.SysUtils, System.Generics.Collections, System.Net.HttpClientComponent, uControllerIntegracao,
-  System.JSON, FireDAC.Comp.Client, FireDAC.DApt, uModelPessoas, uModelEndereco, uDAOPessoas ;
+  System.JSON, FireDAC.Comp.Client, FireDAC.DApt, uModelPessoas, uModelEndereco, uDAOConexao ;
 
 
 type
@@ -17,14 +17,18 @@ type
     FLotePessoasDados : TFDMemTable;
     FListLotePessoasDados  : TObjectList<TModelPessoas> ;
     FListaMemTableIntegrar : TObjectList<TFDMemTable>   ;
+    FConexaoThreads : TDAOConexao;
 
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
+    function incluirLote(ModelPessoasList: TObjectList<TModelPessoas>): Boolean;
 
   public
-     property ModelPessoas    : TModelPessoas  read  FModelPessoas     write FModelPessoas  ;
-     property ModelEndereco   : TModelEndereco read  FModelEndereco    write FModelEndereco ;
+     property ModelPessoas    : TModelPessoas  read  FModelPessoas     write FModelPessoas     ;
+     property ModelEndereco   : TModelEndereco read  FModelEndereco    write FModelEndereco    ;
      property LotePessoasDados: TFDMemTable    read  FLotePessoasDados write FLotePessoasDados ;
+     property daoConexaoThreads      : TDAOConexao    read FConexaoThreads           write FConexaoThreads          ;
+
      property ListLotePessoasDados : TObjectList<TModelPessoas>   read  FListLotePessoasDados  write FListLotePessoasDados ;
      property ListaMemTableIntegrar: TObjectList<TFDMemTable>     read  FListaMemTableIntegrar write FListaMemTableIntegrar ;
 
@@ -37,17 +41,19 @@ type
 
 implementation
 
+
 { ControllerIntegracao }
 
 constructor TControllerLotePessoas.Create   ;
 begin
     inherited Create (True);
-    FreeOnTerminate := True;
+    FreeOnTerminate       := True;
+    FConexaoThreads       := TDAOConexao.Create;
     FListLotePessoasDados := TObjectList<TModelPessoas>.Create ;
     FListaMemTableIntegrar:= TObjectList<TFDMemTable>.Create   ;
-    FModelPessoas  := TModelPessoas.Create  ;
-    FModelEndereco := TModelEndereco.Create ;
-    FLotePessoasDados := LotePessoasDados   ;
+    FModelPessoas         := TModelPessoas.Create  ;
+    FModelEndereco        := TModelEndereco.Create ;
+    FLotePessoasDados     := LotePessoasDados   ;
 end;
 
 destructor TControllerLotePessoas.destroy;
@@ -56,6 +62,7 @@ var
 begin
   FreeAndNil(FModelPessoas) ;
   FreeAndNil(FModelEndereco);
+  FreeAndNil(FConexaoThreads)      ;
 
   //Inicio a Integração CEPs
   ControllerIntegracao := TControllerIntegracao.Create ;
@@ -66,14 +73,11 @@ end;
 
 procedure TControllerLotePessoas.Execute;
 var
-  daoPessoas        : TDAOPessoas ;
   dsdocumento, nmprimeiro, nmsegundo, ceps : String ;
   I : Integer ;
 begin
+     NameThreadForDebugging('ControllerLotePessoas');
 
-  NameThreadForDebugging('uControllerIntegracao');
-  { Place thread code here }
-  daoPessoas := TDAOPessoas.Create ;
      for I := 0 to FListaMemTableIntegrar.Count - 1 do
      begin
         ListLotePessoasDados.Clear ;
@@ -90,10 +94,7 @@ begin
            FListaMemTableIntegrar[I].Next ;
         end;
 
-        TThread.Synchronize(nil , procedure
-        begin
-           daoPessoas.incluirLote(ListLotePessoasDados) ;
-        end) ;
+        incluirLote(ListLotePessoasDados) ;
 
      end ;
 
@@ -127,6 +128,51 @@ begin
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idpessoa    := 0   ;
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].dscep       := _ListEnderecos[I]   ;
    end;
+end;
+
+function TControllerLotePessoas.incluirLote(ModelPessoasList: TObjectList<TModelPessoas>): Boolean;
+var
+  QueryLote : TFDQuery ;
+  ModelPessoas       : TModelPessoas  ;
+  _EnderecoColection : TModelEndereco ;
+   listaCeps  : string ;
+   sqlBuscaID : string ;
+   I : Integer ;
+begin
+  try
+      { select LAST_INSERT_ID() mysql | RETURNING idpessoa PostGres }
+      if FConexaoThreads.getGDBdefault = 'MySQL' then
+         sqlBuscaID := '; select LAST_INSERT_ID();'  else sqlBuscaID := ' RETURNING idpessoa;' ;
+
+      FConexaoThreads.getConexao.StartTransaction ;
+      QueryLote := FConexaoThreads.criarQrery;
+      try
+          for I := 0 to ModelPessoasList.Count -1 do
+          begin
+
+            QueryLote.Open('insert into pessoa (f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro) values (:f1natureza,:dsdocumento,:nmprimeiro,:nmsegundo,CURRENT_DATE) ' + sqlBuscaID ,
+                              [ModelPessoasList.Items[I].f1natureza, ModelPessoasList.Items[I].dsdocumento, ModelPessoasList.Items[I].nmprimeiro, ModelPessoasList.Items[I].nmsegundo]
+                            ) ;
+             ModelPessoasList.Items[I].idpessoa := QueryLote.Fields[0].AsInteger ;
+
+             for _EnderecoColection in ModelPessoasList.Items[I].dscep do
+             begin
+                 QueryLote.ExecSQL('insert into endereco (idpessoa,dscep) SELECT :_idpessoa,:_dscep where not exists (select e.idpessoa, e.dscep from endereco e where e.idpessoa = :_idpessoa and e.dscep = :_dscep )',
+                                [ModelPessoasList.Items[I].idpessoa,_EnderecoColection.dscep ])  ;
+             end;
+
+          end;
+
+      FConexaoThreads.getConexao.Commit ;
+      result := true ;
+    except
+      FConexaoThreads.getConexao.Rollback ;
+      result := false ;
+    end;
+  finally
+      FreeAndNil(QueryLote) ;
+  end;
+
 end;
 
 end.

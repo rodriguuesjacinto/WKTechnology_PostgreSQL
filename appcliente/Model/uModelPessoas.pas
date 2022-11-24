@@ -29,7 +29,7 @@ type
       constructor Create;
       destructor destroy; override;
 
-      function persistir  : Boolean ;
+      procedure persistir  ;
 
   end;
 
@@ -52,16 +52,16 @@ begin
   FreeAndNil(Fdscep) ;
 end;
 
-function TModelPessoas.persistir: Boolean;
+procedure TModelPessoas.persistir ;
 begin
   try
       case FEnumerador of
         tipoIncluir:
-          result := uClientModulePessoa.ClientModulePessoa.UpdatePessoa(self) ;
+          uClientModulePessoa.ClientModulePessoa.UpdatePessoa(self) ;
         tipoExcluir:
-          result := uClientModulePessoa.ClientModulePessoa.CancelPessoa(self) ;
+          uClientModulePessoa.ClientModulePessoa.CancelPessoa(self) ;
         tipoAlterar:
-          result := uClientModulePessoa.ClientModulePessoa.AcceptPessoa(self) ;
+          uClientModulePessoa.ClientModulePessoa.AcceptPessoa(self) ;
       end;
   finally
 

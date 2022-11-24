@@ -12,7 +12,6 @@ uses
   uControllerPessoas in 'Controller\uControllerPessoas.pas',
   uWSPessoas in 'View\uWSPessoas.pas' {WSPessoas: TDSServerModule},
   uDAOEndereco in 'DAO\uDAOEndereco.pas',
-  uDAOEnderecoIntegracao in 'DAO\uDAOEnderecoIntegracao.pas',
   uEnumerador in 'Model\uEnumerador.pas',
   uModelEndereco in 'Model\uModelEndereco.pas',
   uModelEnderecoIntegracao in 'Model\uModelEnderecoIntegracao.pas',
