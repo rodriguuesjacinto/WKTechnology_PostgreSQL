@@ -149,13 +149,13 @@ begin
    ListLotePessoasDados[ListLotePessoasDados.Count-1].enuTipo      :=  uEnumerador.tipoIncluir ;
 
    _ListEnderecos  := TStringList.Create ;
-   ExtractStrings([','], [], PChar(ceps), _ListEnderecos);
+   ExtractStrings(['|'], [], PChar(ceps), _ListEnderecos);
    for I := 0 to _ListEnderecos.Count -1 do
    begin
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Add(TModelEndereco.Create) ;
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idendereco  := 0   ;
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idpessoa    := 0   ;
-          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].dscep       := copy(GetStrNumber(_ListEnderecos[I]),0,5)+'-'+copy(GetStrNumber(_ListEnderecos[I]),5,3)   ;
+          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].dscep       := copy(GetStrNumber(_ListEnderecos[I]),0,5)+'-'+copy(GetStrNumber(_ListEnderecos[I]),6,3)   ;
    end;
 end;
 

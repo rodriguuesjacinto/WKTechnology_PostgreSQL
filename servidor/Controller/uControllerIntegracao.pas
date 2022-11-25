@@ -17,6 +17,7 @@ type
     procedure incluir(
       ModelEnderecoIntegracao: TModelEnderecoIntegracao) ;
     function selecionarCepsNaoIntegrados: TFDQuery;
+    function GetStrNumber(const S: string): string;
 
   public
      property ModelEnderecoIntegracao : TModelEnderecoIntegracao read  FModelEnderecoIntegracao write FModelEnderecoIntegracao ;
@@ -103,11 +104,15 @@ var
 begin
     if (Length(Acep) = 9) and (copy(Acep,6,1) = '-') then
     begin
-        JSON :=  BuscaEnderecoIntegracao('https://viacep.com.br/ws/'+ aCEP +'/json/')  ;
+       if FConexaoThreads.getAPICep = 'opencep' then
+          JSON :=  BuscaEnderecoIntegracao('https://opencep.com/v1/'+ GetStrNumber(aCEP) +'.json')
+       else
+          JSON :=  BuscaEnderecoIntegracao('https://viacep.com.br/ws/'+ GetStrNumber(aCEP) +'/json/')  ;
+
         for I := 0 to JSON.Count -1 do
         begin
             currcond := json.Items[I] as TJSONObject;
-            if not(currcond.TryGetValue('erro',_erro)) then
+            if not(currcond.TryGetValue('erro',_erro) or currcond.TryGetValue('error',_erro)) then
             begin
                FModelEnderecoIntegracao.idendereco    := Aidendereco  ;
                FModelEnderecoIntegracao.nmlogradouro  := UTF8ToString((currcond.GetValue('logradouro').Value))   ;
@@ -172,6 +177,26 @@ begin
 
   except
     FConexaoThreads.getConexao.Rollback ;
+  end;
+end;
+
+function TControllerIntegracao.GetStrNumber(const S: string): string;
+var
+  vText : PChar;
+begin
+  vText := PChar(S);
+  Result := '';
+
+  while (vText^ <> #0) do
+  begin
+    {$IFDEF UNICODE}
+    if CharInSet(vText^, ['0'..'9']) then
+    {$ELSE}
+    if vText^ in ['0'..'9'] then
+    {$ENDIF}
+      Result := Result + vText^;
+
+    Inc(vText);
   end;
 end;
 

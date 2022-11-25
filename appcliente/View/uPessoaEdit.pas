@@ -86,7 +86,7 @@ procedure TFormPessoaEdit.ButtonCEPClick(Sender: TObject);
 begin
    if Length(GetStrNumber(Edit_CEP.Text)) = 8 then
    begin
-       TListItemText(ListViewEndereco.Items.Add.Objects.FindDrawable('endereco')).Text := copy(GetStrNumber(Edit_CEP.Text),0,5)+'-'+copy(GetStrNumber(Edit_CEP.Text),5,3) + ' - [ Aguardando Integração ]' ;
+       TListItemText(ListViewEndereco.Items.Add.Objects.FindDrawable('endereco')).Text := copy(GetStrNumber(Edit_CEP.Text),0,5)+'-'+copy(GetStrNumber(Edit_CEP.Text),6,3) + ' - [ Aguardando Integração ]' ;
        Edit_CEP.Text := '' ;
        Edit_CEP.SetFocus   ;
    end

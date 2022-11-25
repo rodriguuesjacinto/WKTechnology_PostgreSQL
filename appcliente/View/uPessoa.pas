@@ -285,6 +285,8 @@ begin
   FormPessoaEdit := TFormPessoaEdit.create ( nil );
   try
     FormPessoaEdit.Tag    := 0 ;
+
+    FormPessoaEdit.Edit_dtregistro.Date := Date()    ;
     FormPessoaEdit.ButtonConfirmar.Text := 'Incluir' ;
     FormPessoaEdit.ShowModal ;
   finally

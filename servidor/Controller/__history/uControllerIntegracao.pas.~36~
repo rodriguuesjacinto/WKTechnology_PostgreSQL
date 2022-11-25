@@ -3,17 +3,21 @@ unit uControllerIntegracao ;
 interface
 
 uses
-  System.Classes, uModelEnderecoIntegracao, uEnumerador, System.Net.URLClient, System.Net.HttpClient,
-  System.Net.HttpClientComponent, System.JSON, FireDAC.Comp.Client, FireDAC.DApt ;
+  SysUtils, System.Classes, uModelEnderecoIntegracao, uEnumerador, System.Net.URLClient, System.Net.HttpClient,
+  System.Net.HttpClientComponent, System.JSON, FireDAC.Comp.Client, FireDAC.DApt, uDAOConexao ;
 
 type
   TControllerIntegracao = class(TThread)
   private
-      FModelEnderecoIntegracao: TModelEnderecoIntegracao ;
+    FModelEnderecoIntegracao: TModelEnderecoIntegracao ;
     FConexaoThreads: TDAOConexao;
 
-      function  BuscaEnderecoIntegracao(const aURL : String) : TJSONArray ;
-      function  PreparaDadosIntegracao(const Aidendereco : Integer ; const aCEP : String) : Boolean ;
+    function  BuscaEnderecoIntegracao(const aURL : String) : TJSONArray ;
+    procedure  PreparaDadosIntegracao(const Aidendereco : Integer ; const aCEP : String) ;
+    procedure incluir(
+      ModelEnderecoIntegracao: TModelEnderecoIntegracao) ;
+    function selecionarCepsNaoIntegrados: TFDQuery;
+    function GetStrNumber(const S: string): string;
 
   public
      property ModelEnderecoIntegracao : TModelEnderecoIntegracao read  FModelEnderecoIntegracao write FModelEnderecoIntegracao ;
@@ -32,8 +36,10 @@ implementation
 
 constructor TControllerIntegracao.Create;
 begin
+    FreeOnTerminate          := True;
     FModelEnderecoIntegracao := TModelEnderecoIntegracao.Create ;
-    FConexaoThreads          := TDAOConexao.Create;
+    FConexaoThreads          := TDAOConexao.Create ;
+
     inherited ;
 end;
 
@@ -45,6 +51,25 @@ begin
   inherited;
 end;
 
+procedure TControllerIntegracao.Execute;
+var
+  Query : TFDQuery ;
+begin
+  NameThreadForDebugging('uControllerIntegracao');
+
+  Query := selecionarCepsNaoIntegrados ;
+  try
+      Query.Open ;
+      while not Query.Eof do
+      begin
+         PreparaDadosIntegracao(Query.FieldByName('idendereco').AsInteger, Query.FieldByName('dscep').AsString) ;
+         Query.Next ;
+      end;
+  finally
+      FreeAndNil(Query)  ;
+  end;
+  FreeOnTerminate := True;
+end;
 
 function TControllerIntegracao.BuscaEnderecoIntegracao(const aURL : String) : TJSONArray ;
 var
@@ -69,7 +94,7 @@ begin
   end;
 end;
 
-function TControllerIntegracao.PreparaDadosIntegracao(const Aidendereco : Integer ; const  Acep : String) : Boolean ;
+procedure TControllerIntegracao.PreparaDadosIntegracao(const Aidendereco : Integer ; const  Acep : String) ;
 var
   StringList : TStringList;
   json       : TJSONArray ;
@@ -79,11 +104,12 @@ var
 begin
     if (Length(Acep) = 9) and (copy(Acep,6,1) = '-') then
     begin
-        JSON :=  BuscaEnderecoIntegracao('https://viacep.com.br/ws/'+ aCEP +'/json/')  ;
+        //JSON :=  BuscaEnderecoIntegracao('https://viacep.com.br/ws/'+ aCEP +'/json/')  ;
+        JSON :=  BuscaEnderecoIntegracao('https://opencep.com/v1/'+ GetStrNumber(aCEP) +'.json')  ;
         for I := 0 to JSON.Count -1 do
         begin
             currcond := json.Items[I] as TJSONObject;
-            if not(currcond.TryGetValue('erro',_erro)) then
+            if not(currcond.TryGetValue('erro',_erro) or currcond.TryGetValue('error',_erro)) then
             begin
                FModelEnderecoIntegracao.idendereco    := Aidendereco  ;
                FModelEnderecoIntegracao.nmlogradouro  := UTF8ToString((currcond.GetValue('logradouro').Value))   ;
@@ -114,29 +140,62 @@ begin
         FModelEnderecoIntegracao.dsuf          := '' ;
         FModelEnderecoIntegracao.enuTipo       := uEnumerador.tipoIncluir ;
     end;
-    FModelEnderecoIntegracao.persistir ;
+
+    incluir(FModelEnderecoIntegracao) ;
+
 end;
 
-procedure TControllerIntegracao.Execute;
+function TControllerIntegracao.selecionarCepsNaoIntegrados(): TFDQuery;
 var
   Query : TFDQuery ;
 begin
-  NameThreadForDebugging('uControllerIntegracao');
-  { Place thread code here }
-  Query := FModelEnderecoIntegracao.selecionarCepsNaoIntegrados ;
+  Query := FConexaoThreads.criarQrery;
+  Query.Open('select e.idendereco, e.dscep from endereco e  where e.idendereco not in (select ei.idendereco from endereco_integracao ei )')  ;
+  result := Query ;
+end;
+
+procedure TControllerIntegracao.incluir(ModelEnderecoIntegracao : TModelEnderecoIntegracao) ;
+var
+  Query : TFDQuery ;
+begin
   try
-      Query.Open ;
-      while not Query.Eof do
-      begin
-         PreparaDadosIntegracao(Query.FieldByName('idendereco').AsInteger, Query.FieldByName('dscep').AsString) ;
-         Query.Next ;
-      end;
-  finally
-      Query.DisposeOf;
-      Terminate;
-      WaitFor;
-      Free;
+     FConexaoThreads.getConexao.StartTransaction ;
+
+    Query := FConexaoThreads.criarQrery;
+    try
+      Query.ExecSQL('insert into endereco_integracao (idendereco,dsuf,nmcidade,nmbairro,nmlogradouro,dscomplemento) values (:idendereco,:dsuf,:nmcidade,:nmbairro,:nmlogradouro,:dscomplemento)',
+                    [ModelEnderecoIntegracao.idendereco, ModelEnderecoIntegracao.dsuf, ModelEnderecoIntegracao.nmcidade, ModelEnderecoIntegracao.nmbairro, ModelEnderecoIntegracao.nmlogradouro, ModelEnderecoIntegracao.dscomplemento]
+                  ) ;
+    finally
+      FreeAndNil(Query) ;
+    end;
+
+    FConexaoThreads.getConexao.Commit ;
+
+  except
+    FConexaoThreads.getConexao.Rollback ;
   end;
 end;
+
+function TControllerIntegracao.GetStrNumber(const S: string): string;
+var
+  vText : PChar;
+begin
+  vText := PChar(S);
+  Result := '';
+
+  while (vText^ <> #0) do
+  begin
+    {$IFDEF UNICODE}
+    if CharInSet(vText^, ['0'..'9']) then
+    {$ELSE}
+    if vText^ in ['0'..'9'] then
+    {$ENDIF}
+      Result := Result + vText^;
+
+    Inc(vText);
+  end;
+end;
+
 
 end.

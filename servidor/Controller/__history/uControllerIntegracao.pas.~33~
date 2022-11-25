@@ -9,13 +9,13 @@ uses
 type
   TControllerIntegracao = class(TThread)
   private
-      FModelEnderecoIntegracao: TModelEnderecoIntegracao ;
-      FConexaoThreads: TDAOConexao;
+    FModelEnderecoIntegracao: TModelEnderecoIntegracao ;
+    FConexaoThreads: TDAOConexao;
 
-      function  BuscaEnderecoIntegracao(const aURL : String) : TJSONArray ;
-      function  PreparaDadosIntegracao(const Aidendereco : Integer ; const aCEP : String) : Boolean ;
-    function incluir(
-      ModelEnderecoIntegracao: TModelEnderecoIntegracao): Boolean;
+    function  BuscaEnderecoIntegracao(const aURL : String) : TJSONArray ;
+    procedure  PreparaDadosIntegracao(const Aidendereco : Integer ; const aCEP : String) ;
+    procedure incluir(
+      ModelEnderecoIntegracao: TModelEnderecoIntegracao) ;
     function selecionarCepsNaoIntegrados: TFDQuery;
 
   public
@@ -35,8 +35,10 @@ implementation
 
 constructor TControllerIntegracao.Create;
 begin
+    FreeOnTerminate          := True;
     FModelEnderecoIntegracao := TModelEnderecoIntegracao.Create ;
-    FConexaoThreads          := TDAOConexao.Create;
+    FConexaoThreads          := TDAOConexao.Create ;
+
     inherited ;
 end;
 
@@ -53,7 +55,7 @@ var
   Query : TFDQuery ;
 begin
   NameThreadForDebugging('uControllerIntegracao');
-  { Place thread code here }
+
   Query := selecionarCepsNaoIntegrados ;
   try
       Query.Open ;
@@ -63,11 +65,9 @@ begin
          Query.Next ;
       end;
   finally
-      Query.DisposeOf;
-      Terminate;
-      WaitFor;
-      Free;
+      FreeAndNil(Query)  ;
   end;
+  FreeOnTerminate := True;
 end;
 
 function TControllerIntegracao.BuscaEnderecoIntegracao(const aURL : String) : TJSONArray ;
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-function TControllerIntegracao.PreparaDadosIntegracao(const Aidendereco : Integer ; const  Acep : String) : Boolean ;
+procedure TControllerIntegracao.PreparaDadosIntegracao(const Aidendereco : Integer ; const  Acep : String) ;
 var
   StringList : TStringList;
   json       : TJSONArray ;
@@ -152,7 +152,7 @@ begin
   result := Query ;
 end;
 
-function TControllerIntegracao.incluir(ModelEnderecoIntegracao : TModelEnderecoIntegracao): Boolean;
+procedure TControllerIntegracao.incluir(ModelEnderecoIntegracao : TModelEnderecoIntegracao) ;
 var
   Query : TFDQuery ;
 begin
@@ -169,10 +169,9 @@ begin
     end;
 
     FConexaoThreads.getConexao.Commit ;
-    result := true ;
+
   except
     FConexaoThreads.getConexao.Rollback ;
-    result := false ;
   end;
 end;
 

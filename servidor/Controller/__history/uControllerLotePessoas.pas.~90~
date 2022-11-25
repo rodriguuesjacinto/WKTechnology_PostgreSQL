@@ -22,6 +22,7 @@ type
     function PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo,
       ceps: String): TModelPessoas;
     function incluirLote(ModelPessoasList: TObjectList<TModelPessoas>): Boolean;
+    function GetStrNumber(const S: string): string;
 
   public
      property ModelPessoas    : TModelPessoas  read  FModelPessoas     write FModelPessoas     ;
@@ -47,13 +48,13 @@ implementation
 constructor TControllerLotePessoas.Create   ;
 begin
     inherited Create (True);
-    FreeOnTerminate := True;
-    FConexaoThreads := TDAOConexao.Create;
+    FreeOnTerminate       := True;
+    FConexaoThreads       := TDAOConexao.Create;
     FListLotePessoasDados := TObjectList<TModelPessoas>.Create ;
     FListaMemTableIntegrar:= TObjectList<TFDMemTable>.Create   ;
-    FModelPessoas  := TModelPessoas.Create  ;
-    FModelEndereco := TModelEndereco.Create ;
-    FLotePessoasDados := LotePessoasDados   ;
+    FModelPessoas         := TModelPessoas.Create  ;
+    FModelEndereco        := TModelEndereco.Create ;
+    FLotePessoasDados     := LotePessoasDados   ;
 end;
 
 destructor TControllerLotePessoas.destroy;
@@ -63,8 +64,9 @@ begin
   FreeAndNil(FModelPessoas) ;
   FreeAndNil(FModelEndereco);
   FreeAndNil(FConexaoThreads)      ;
+
   //Inicio a Integração CEPs
-  //ControllerIntegracao := TControllerIntegracao.Create ;
+  ControllerIntegracao := TControllerIntegracao.Create ;
 
   inherited;
 end;
@@ -73,7 +75,7 @@ end;
 procedure TControllerLotePessoas.Execute;
 var
   dsdocumento, nmprimeiro, nmsegundo, ceps : String ;
-  I : Integer ;
+  I , controlaCommit : Integer ;
 begin
      NameThreadForDebugging('ControllerLotePessoas');
 
@@ -81,14 +83,22 @@ begin
      begin
         ListLotePessoasDados.Clear ;
         FListaMemTableIntegrar[I].Open ;
+        controlaCommit := FListaMemTableIntegrar[I].RecordCount ;
+        controlaCommit := trunc(controlaCommit / 50) + 1 ;
         while not FListaMemTableIntegrar[I].Eof do
         begin
-           dsdocumento  := FListaMemTableIntegrar[I].FieldByName('dsdocumento').AsString ;
-           nmprimeiro   := FListaMemTableIntegrar[I].FieldByName('nmprimeiro').AsString  ;
-           nmsegundo    := FListaMemTableIntegrar[I].FieldByName('nmsegundo').AsString   ;
+           dsdocumento  := copy(GetStrNumber(FListaMemTableIntegrar[I].FieldByName('dsdocumento').AsString),0,20)   ;
+           nmprimeiro   := copy(UTF8ToString(FListaMemTableIntegrar[I].FieldByName('nmprimeiro').AsString) ,0,100)  ;
+           nmsegundo    := copy(UTF8ToString(FListaMemTableIntegrar[I].FieldByName('nmsegundo').AsString)  ,0,100)  ;
            ceps         := FListaMemTableIntegrar[I].FieldByName('ceps').AsString        ;
 
            PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps)    ;
+
+           if ListLotePessoasDados.Count = controlaCommit  then
+           begin
+              incluirLote(ListLotePessoasDados) ;
+              ListLotePessoasDados.Clear ;
+           end;
 
            FListaMemTableIntegrar[I].Next ;
         end;
@@ -98,6 +108,26 @@ begin
      end ;
 
      FreeOnTerminate := True;
+end;
+
+function TControllerLotePessoas.GetStrNumber(const S: string): string;
+var
+  vText : PChar;
+begin
+  vText := PChar(S);
+  Result := '';
+
+  while (vText^ <> #0) do
+  begin
+    {$IFDEF UNICODE}
+    if CharInSet(vText^, ['0'..'9']) then
+    {$ELSE}
+    if vText^ in ['0'..'9'] then
+    {$ENDIF}
+      Result := Result + vText^;
+
+    Inc(vText);
+  end;
 end;
 
 function TControllerLotePessoas.PreparaDadosModelPessoas(dsdocumento, nmprimeiro, nmsegundo, ceps : String ) : TModelPessoas ;
@@ -119,13 +149,13 @@ begin
    ListLotePessoasDados[ListLotePessoasDados.Count-1].enuTipo      :=  uEnumerador.tipoIncluir ;
 
    _ListEnderecos  := TStringList.Create ;
-   ExtractStrings(['|'], [], PChar(ceps), _ListEnderecos);
+   ExtractStrings([','], [], PChar(ceps), _ListEnderecos);
    for I := 0 to _ListEnderecos.Count -1 do
    begin
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Add(TModelEndereco.Create) ;
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idendereco  := 0   ;
           ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].idpessoa    := 0   ;
-          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].dscep       := _ListEnderecos[I]   ;
+          ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep[ListLotePessoasDados[ListLotePessoasDados.Count-1].dscep.Count-1].dscep       := copy(GetStrNumber(_ListEnderecos[I]),0,5)+'-'+copy(GetStrNumber(_ListEnderecos[I]),6,3)   ;
    end;
 end;
 

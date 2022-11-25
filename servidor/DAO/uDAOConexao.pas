@@ -18,9 +18,10 @@ type
 
   public
 
-    function getConexao: TFDConnection;
-    function criarQrery: TFDQuery;
+    function getConexao   : TFDConnection;
+    function criarQrery   : TFDQuery     ;
     function getGDBdefault: String ;
+    function getAPICep    : String ;
 
     constructor Create;
     destructor Destroy; Override ;
@@ -31,7 +32,7 @@ implementation
 
 { TDAOConexao }
 var
-  cVendorLib, cDriverID , cDatabase, cUserName, cPassword , cPort, cServer , cGDBdefault : String ;
+  cVendorLib, cDriverID , cDatabase, cUserName, cPassword , cPort, cServer , cGDBdefault, cAPICep : String ;
 
 constructor TDAOConexao.Create;
 begin
@@ -79,6 +80,11 @@ begin
      FreeAndNil(FMySQLDriverLink);
 end;
 
+function TDAOConexao.getAPICep: String;
+begin
+  result := cAPICep ;
+end;
+
 function TDAOConexao.getConexao: TFDConnection;
 begin
   result := FConexao;
@@ -116,6 +122,9 @@ begin
        cPort      := ArquivoINI.ReadString('PostgreSQL', 'cPort'     , '' );
        cServer    := ArquivoINI.ReadString('PostgreSQL', 'cServer'   , '' );
    end;
+   // API Cep
+   cAPICep        := ArquivoINI.ReadString('APICep', 'cAPICep'   , '' );
+
    ArquivoINI.Free ;
 end;
 
