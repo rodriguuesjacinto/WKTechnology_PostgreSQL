@@ -1,0 +1,426 @@
+object FormPessoaLote: TFormPessoaLote
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
+  Caption = 'Cadastro de Pessoas em Lote'
+  ClientHeight = 628
+  ClientWidth = 990
+  Cursor = crHandPoint
+  Position = ScreenCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object StatusBar1: TStatusBar
+    Position.Y = 606.000000000000000000
+    ShowSizeGrip = True
+    Size.Width = 990.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+  end
+  object PanelTop: TPanel
+    Align = Top
+    Padding.Left = 10.000000000000000000
+    Padding.Top = 10.000000000000000000
+    Padding.Right = 10.000000000000000000
+    Padding.Bottom = 10.000000000000000000
+    Size.Width = 990.000000000000000000
+    Size.Height = 65.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Label2: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 9.000000000000000000
+      Position.Y = 13.000000000000000000
+      Size.Width = 296.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Selecione o arquivo para importa'#231#227'o em lote'
+      TabOrder = 1
+    end
+    object EditPathArquivo: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 2
+      ReadOnly = True
+      Position.X = 128.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 521.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Button_arquivo: TButton
+      Images = ImageList1
+      ImageIndex = 0
+      Position.X = 5.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 115.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      Text = 'Buscar Arquivo'
+      OnClick = Button_arquivoClick
+    end
+    object ButtonExportaLote: TButton
+      Enabled = False
+      Images = ImageList1
+      ImageIndex = 2
+      Position.X = 792.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 167.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Enviar Cadastro em Lote'
+      OnClick = ButtonExportaLoteClick
+    end
+    object ButtoVerificar: TButton
+      Images = ImageList1
+      ImageIndex = 1
+      Position.X = 653.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 95.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'Preparar'
+      OnClick = ButtoVerificarClick
+    end
+  end
+  object PanelCentro: TPanel
+    Align = Client
+    Padding.Left = 10.000000000000000000
+    Padding.Top = 10.000000000000000000
+    Padding.Right = 10.000000000000000000
+    Padding.Bottom = 10.000000000000000000
+    Size.Width = 990.000000000000000000
+    Size.Height = 541.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Label1: TLabel
+      Align = Top
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 10.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 970.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Visualiza'#231#227'o do Arquivo'
+      TabOrder = 0
+      object SpeedButton1: TSpeedButton
+        Cursor = crHandPoint
+        StyledSettings = [Family, Size]
+        Position.X = 176.000000000000000000
+        Position.Y = -2.000000000000000000
+        Size.Width = 201.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        Text = '{ Click aqui para ver o exemplo }'
+        TextSettings.Font.StyleExt = {04040000000000000004000000}
+        TextSettings.FontColor = claBlue
+        OnClick = SpeedButton1Click
+      end
+    end
+    object ListViewArquivo: TListView
+      ItemAppearanceClassName = 'TDynamicAppearance'
+      ItemEditAppearanceClassName = 'TDynamicAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      Align = Client
+      Size.Width = 970.000000000000000000
+      Size.Height = 462.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      ItemAppearance.ItemHeight = 30
+      ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'dsdocumento'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.TextAlign = Leading
+          Appearance.Width = 111.000000000000000000
+          Appearance.Height = 25.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'nmprimeiro'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.TextAlign = Leading
+          Appearance.Width = 218.000000000000000000
+          Appearance.Height = 25.000000000000000000
+          Appearance.PlaceOffset.X = 113.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'nmsegundo'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.TextAlign = Leading
+          Appearance.Width = 345.000000000000000000
+          Appearance.Height = 25.000000000000000000
+          Appearance.PlaceOffset.X = 334.000000000000000000
+          Appearance.PlaceOffset.Y = 1.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'ceps'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.TextAlign = Leading
+          Appearance.Width = 250.000000000000000000
+          Appearance.Height = 25.000000000000000000
+          Appearance.PlaceOffset.X = 682.000000000000000000
+          Appearance.PlaceOffset.Y = 2.000000000000000000
+        end>
+      ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'Text1'
+          AppearanceClassName = 'TTextObjectAppearance'
+        end>
+      object LabelTempo: TLabel
+        Align = Center
+        StyledSettings = [Family, FontColor]
+        Size.Width = 209.000000000000000000
+        Size.Height = 137.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 48.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.HorzAlign = Center
+        Text = '1'
+        TabOrder = 0
+      end
+    end
+    object ProgressBar_arquivo: TProgressBar
+      Align = Bottom
+      Padding.Left = 5.000000000000000000
+      Padding.Top = 5.000000000000000000
+      Padding.Right = 5.000000000000000000
+      Padding.Bottom = 5.000000000000000000
+      Orientation = Horizontal
+      Position.X = 10.000000000000000000
+      Position.Y = 494.000000000000000000
+      Size.Width = 970.000000000000000000
+      Size.Height = 37.000000000000000000
+      Size.PlatformDefault = False
+      object Label_progresso: TLabel
+        Align = Client
+        StyledSettings = [Family]
+        Size.Width = 960.000000000000000000
+        Size.Height = 27.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.HorzAlign = Center
+        Text = 'Verificando estrutura do arquivo ...'
+        TabOrder = 66
+      end
+    end
+  end
+  object OpenArquivo: TOpenDialog
+    Filter = 'csv|*.csv|txt|*.txt'
+    FilterIndex = 3
+    Left = 938
+    Top = 151
+  end
+  object ImageList1: TImageList
+    Source = <
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              017A49444154384F636440026766A6FD8732C1C0247D168A3C5E706A7ACAFF4F
+              1737FDFFFFF40C1883D82031A8344E00B6E1F894C4FF1A563E0CBCC252604118
+              F8FCF619C38D635BA03C54F08F81E18075CE7C47B0014726C6FD37F54E024B10
+              0B4E6F9DC76093BF889109C4F9F3E70FC39F5FDF49C3403D200036E0F7EFDF0C
+              BF7F7C270D03F5C00D0099F6FBE7379230AA0B809C5F3FBE9284417AE006FC01
+              7B0128480206E90101702CAC2A77F96F68E9001640065F3E7D60B87DF5029487
+              09FEFF63380036606991FD7F43331BB0200C7CF9F491E1F68DCB0C6EA1A95011
+              4C70F1C43E06C685B996FB19189930AD07028FB0148697F72E4379A8E0C5B3A7
+              0CCF9F3E3AC0F2E7DFBF8392F22A0E86E6F65029047876F30C9485099E3C7EC8
+              F09FE1FF41B017666698EE97969474909090004B12022F5EBC6078FAFCF981F4
+              19A72149797ABAB103072BDB7E1616160656565606100DC2CCCCCC600D7FFFFE
+              85A456507A0186FEB76FDF18FE31323866CE3C7B00AC807CC0C00000BC2946F1
+              C771D04B0000000049454E44AE426082}
+            FileName = 
+              'D:\DELPHI_2010\Imagens\Web Development Icon\Pi Diagona Icons\01\' +
+              '16\47.png'
+          end>
+        Name = '47'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              01A749444154384F6364C002EEAE646860E612AF67E3516060E5556460E61407
+              8BFFFDFE92E1F7E7FB0CBFBE3C60F8FBEDE501E5700647B0043AB8BD82E1FFFF
+              FF77B1E26F2F97FD07C943953230416938B8BE94A14150330368DD270CFCEDF9
+              3E86477BA218542318E02EC7F0C2D5450CFFB54277437908F0F5F5458687074A
+              18B4E350F5A0B8E0E27C860611F5200686DF2F51F0D7670718EEEDC5D40C0228
+              02E76633FC370CEC82F220E0CB9BBB0CCFAFEF01D3C8E0FF3F8603C6E90C8E70
+              034E4E67689051B7A8975237878A00012F900DC248E0F3B3930C373645319865
+              422C871B706C32C37F4B9F60280F3BF8F4F635C3D5E38718AC7211FA9841C4C1
+              5E8606591559070101A0F8DFCF58F187574F192E1E3DC3605B80EA6D30676F27
+              C37E20CB012C020582C29C0C86E69260F6FBB7DF19CE9F7CCEE05C86AA1927D8
+              D9CAD0706735FBFFFFE7F9FEBFDDCBF57F671B22E11005B6360153E21986FF6F
+              7632FC07B1A1C2C4818DF50C0D379741346FAA27AC192329FFFBCB502F24C4C0
+              70F83003835F23613FA328585DC9D00014A807B143DA890B301417FCFBC360FF
+              EF1FF19A19181818006A09C34696213CD00000000049454E44AE426082}
+            FileName = 
+              'D:\DELPHI_2010\Imagens\Web Development Icon\Pi Diagona Icons\03\' +
+              '16\46.png'
+          end>
+        Name = '46'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              016149444154384FA592CD6AC24014858F25D49052098208BE44256EBA8C7BC1
+              37C84E0A7DA042F12902D9EBB2E0DFBEEEDDB850691A8C4948E75C9860826DA5
+              3D702637932F77E6CE1DFC57350EA3D168621886FBF8F482BB5BE05E994FD310
+              06C714F83C011FCA7CBEBD3E234DD3E9783CEE0B92E7B9DBED76E13D08FFAB8E
+              8A9DCD662EE31B0E2A1BB22C439CE12A93E53F45023D11A9ED5D63BD60912049
+              12719428E00A6BBE48C08C9C58AFDF2F6EF9DC64C8EA12A40BC3E130EFF57AD8
+              6EB788E3583E7CA77ABD8E56AB85C56201DFF76BA5126CDB46BBDDFED164344F
+              491BF9723AA9D3511A0C06E8743A1257B5D96C100481C43A41E90C0E8783ACE0
+              799E388AA292F98D0C597D06A51276BB1DF6FB3D1A8D869871D564345F24D0F7
+              80005768369B62C65593215BBA07AAFEFE7C3E471886B255BD836A093499F39B
+              286DA4541B5DD334278EE3C0B22C315B46B1B53AC172B9D4254C57AB555F80BF
+              0BF802EC7C62D474AB0AEA0000000049454E44AE426082}
+            FileName = 
+              'D:\DELPHI_2010\Imagens\Web Development Icon\Pi Diagona Icons\02\' +
+              '16\45.png'
+          end>
+        Name = '45'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = '47'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = '46'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = '45'
+          end>
+      end>
+    Left = 808
+    Top = 144
+  end
+  object FDBatchMove: TFDBatchMove
+    Reader = FDBatchMoveTextReader
+    Writer = FDBatchMoveDataSetWriter
+    Mappings = <>
+    LogFileEncoding = ecUTF8
+    Left = 178
+    Top = 171
+  end
+  object FDBatchMoveTextReader: TFDBatchMoveTextReader
+    DataDef.Fields = <>
+    Encoding = ecUTF8
+    Left = 226
+    Top = 171
+  end
+  object FDBatchMoveDataSetWriter: TFDBatchMoveDataSetWriter
+    DataSet = FDMemTable
+    Left = 282
+    Top = 171
+  end
+  object FDMemTable: TFDMemTable
+    FieldDefs = <>
+    IndexDefs = <>
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    StoreDefs = True
+    Left = 210
+    Top = 227
+    object FDMemTabledsdocumento: TStringField
+      FieldName = 'dsdocumento'
+    end
+    object FDMemTablenmprimeiro: TStringField
+      FieldName = 'nmprimeiro'
+      Size = 100
+    end
+    object FDMemTablenmsegundo: TStringField
+      FieldName = 'nmsegundo'
+      Size = 100
+    end
+    object FDMemTableceps: TStringField
+      FieldName = 'ceps'
+      Size = 200
+    end
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    ScreenCursor = gcrHourGlass
+    Left = 245
+    Top = 228
+  end
+  object BindSourceDB1: TBindSourceDB
+    DataSet = FDMemTable
+    ScopeMappings = <>
+    Left = 32
+    Top = 504
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 20
+    Top = 5
+    object LinkListControlToField1: TLinkListControlToField
+      Category = 'Quick Bindings'
+      DataSource = BindSourceDB1
+      Control = ListViewArquivo
+      FillExpressions = <
+        item
+          SourceMemberName = 'dsdocumento'
+          ControlMemberName = 'dsdocumento'
+        end
+        item
+          SourceMemberName = 'nmprimeiro'
+          ControlMemberName = 'nmprimeiro'
+        end
+        item
+          SourceMemberName = 'nmsegundo'
+          ControlMemberName = 'nmsegundo'
+        end
+        item
+          SourceMemberName = 'ceps'
+          ControlMemberName = 'ceps'
+        end>
+      FillHeaderExpressions = <>
+      FillBreakGroups = <>
+    end
+  end
+  object TimerTempo: TTimer
+    OnTimer = TimerTempoTimer
+    Left = 426
+    Top = 305
+  end
+end

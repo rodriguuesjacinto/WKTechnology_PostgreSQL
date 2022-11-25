@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 22/11/2022 09:54:29
+// 25/11/2022 05:29:00
 //
 
 unit uClientClassesPessoa;
@@ -25,8 +25,8 @@ type
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
     destructor Destroy; override;
-    function Pessoa(AID_Pessoa: Integer; const ARequestFilter: string = ''): TFDJSONDataSets;
-    function Pessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string = ''): IDSRestCachedTFDJSONDataSets;
+    function Pessoa(AID_Pessoa: Integer; A_Pagina: Integer; const ARequestFilter: string = ''): TFDJSONDataSets;
+    function Pessoa_Cache(AID_Pessoa: Integer; A_Pagina: Integer; const ARequestFilter: string = ''): IDSRestCachedTFDJSONDataSets;
     procedure AcceptPessoa(LDataSetList: TFDJSONDataSets);
     procedure UpdatePessoa(LDataSetList: TFDJSONDataSets);
     procedure CancelPessoa(LDataSetList: TFDJSONDataSets);
@@ -40,15 +40,17 @@ type
   end;
 
 const
-  TWSPessoas_Pessoa: array [0..1] of TDSRestParameterMetaData =
+  TWSPessoas_Pessoa: array [0..2] of TDSRestParameterMetaData =
   (
     (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'A_Pagina'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
     (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TFDJSONDataSets')
   );
 
-  TWSPessoas_Pessoa_Cache: array [0..1] of TDSRestParameterMetaData =
+  TWSPessoas_Pessoa_Cache: array [0..2] of TDSRestParameterMetaData =
   (
     (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'A_Pagina'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
@@ -74,7 +76,7 @@ const
 
 implementation
 
-function TWSPessoasClient.Pessoa(AID_Pessoa: Integer; const ARequestFilter: string): TFDJSONDataSets;
+function TWSPessoasClient.Pessoa(AID_Pessoa: Integer; A_Pagina: Integer; const ARequestFilter: string): TFDJSONDataSets;
 begin
   if FPessoaCommand = nil then
   begin
@@ -84,12 +86,13 @@ begin
     FPessoaCommand.Prepare(TWSPessoas_Pessoa);
   end;
   FPessoaCommand.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FPessoaCommand.Parameters[1].Value.SetInt32(A_Pagina);
   FPessoaCommand.Execute(ARequestFilter);
-  if not FPessoaCommand.Parameters[1].Value.IsNull then
+  if not FPessoaCommand.Parameters[2].Value.IsNull then
   begin
-    FUnMarshal := TDSRestCommand(FPessoaCommand.Parameters[1].ConnectionHandler).GetJSONUnMarshaler;
+    FUnMarshal := TDSRestCommand(FPessoaCommand.Parameters[2].ConnectionHandler).GetJSONUnMarshaler;
     try
-      Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FPessoaCommand.Parameters[1].Value.GetJSONValue(True)));
+      Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FPessoaCommand.Parameters[2].Value.GetJSONValue(True)));
       if FInstanceOwner then
         FPessoaCommand.FreeOnExecute(Result);
     finally
@@ -100,7 +103,7 @@ begin
     Result := nil;
 end;
 
-function TWSPessoasClient.Pessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string): IDSRestCachedTFDJSONDataSets;
+function TWSPessoasClient.Pessoa_Cache(AID_Pessoa: Integer; A_Pagina: Integer; const ARequestFilter: string): IDSRestCachedTFDJSONDataSets;
 begin
   if FPessoaCommand_Cache = nil then
   begin
@@ -110,8 +113,9 @@ begin
     FPessoaCommand_Cache.Prepare(TWSPessoas_Pessoa_Cache);
   end;
   FPessoaCommand_Cache.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FPessoaCommand_Cache.Parameters[1].Value.SetInt32(A_Pagina);
   FPessoaCommand_Cache.ExecuteCache(ARequestFilter);
-  Result := TDSRestCachedTFDJSONDataSets.Create(FPessoaCommand_Cache.Parameters[1].Value.GetString);
+  Result := TDSRestCachedTFDJSONDataSets.Create(FPessoaCommand_Cache.Parameters[2].Value.GetString);
 end;
 
 procedure TWSPessoasClient.AcceptPessoa(LDataSetList: TFDJSONDataSets);

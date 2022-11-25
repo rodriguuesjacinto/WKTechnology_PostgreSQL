@@ -21,7 +21,7 @@ type
   public
     { Public declarations }
 
-     function Pessoa(const AID_Pessoa: Integer = 0): TFDJSONDataSets     ;
+     function Pessoa(const AID_Pessoa: Integer = 0 ; const A_Pagina: Integer = 1): TFDJSONDataSets     ;
      procedure AcceptPessoa(const LDataSetList : TFDJSONDataSets)        ;
      procedure UpdatePessoa(const LDataSetList : TFDJSONDataSets)        ;
      procedure CancelPessoa(const LDataSetList : TFDJSONDataSets)        ;
@@ -39,12 +39,13 @@ implementation
 uses System.StrUtils, uControllerPessoas, uModelEndereco;
 
 
-function TWSPessoas.Pessoa(const AID_Pessoa: Integer = 0): TFDJSONDataSets;
+function TWSPessoas.Pessoa(const AID_Pessoa: Integer = 0; const A_Pagina: Integer = 1): TFDJSONDataSets;
 var
   controllerPessoas : TControllerPessoas ;
 begin
     try
         controllerPessoas := TControllerPessoas.Create;
+        controllerPessoas.ModelPessoas.pagina    := A_Pagina   ;
         controllerPessoas.ModelPessoas.idpessoa  := AID_Pessoa ;
         controllerPessoas.ModelEndereco.idpessoa := AID_Pessoa ;
         Result := controllerPessoas.selecionar ;

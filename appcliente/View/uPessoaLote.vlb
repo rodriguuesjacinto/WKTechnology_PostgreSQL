@@ -1,37 +1,78 @@
-﻿[Label_progresso]
-Coordinates=121,188,110,58
-
-[ProgressBar_arquivo]
-Coordinates=312,10,135,58
-Visible=True
-
-[Button_arquivo]
-Coordinates=10,188,101,58
+﻿[Button_arquivo]
+Coordinates=10,188,90,51
 
 [ImageList1]
-Coordinates=266,283,77,36
+Coordinates=266,283,68,33
 
 [PanelCentro]
-Coordinates=10,256,86,36
+Coordinates=10,256,75,33
 
 [Label1]
-Coordinates=241,188,53,58
+Coordinates=241,188,46,51
 
 [StatusBar1]
-Coordinates=446,188,78,36
+Coordinates=446,188,68,33
 
 [Label2]
-Coordinates=304,188,53,58
+Coordinates=304,188,46,51
 
 [PanelTop]
-Coordinates=367,188,69,36
+Coordinates=367,188,60,33
 
 []
-Coordinates=106,256,85,36
+Coordinates=312,10,119,51
+Visible=True
 
 [EditPathArquivo]
-Coordinates=127,10,44,58
+Coordinates=127,10,95,51
 
 [ListViewArquivo]
-Coordinates=10,10,107,168
+Coordinates=610,20,95,213
+Visible=True
+
+[ButtonExportaLote]
+Coordinates=137,78,107,51
+
+[OpenArquivo]
+Coordinates=296,87,79,33
+
+[SpeedButton1]
+Coordinates=137,265,84,51
+
+[ButtoVerificar]
+Coordinates=300,80,82,51
+
+[FDBatchMoveTextReader]
+Coordinates=485,1,139,33
+
+[FDMemTable]
+Coordinates=750,30,78,33
+Visible=False
+
+[FDBatchMove]
+Coordinates=296,142,83,33
+
+[FDBatchMoveDataSetWriter]
+Coordinates=485,56,151,33
+
+[FDGUIxWaitCursor1]
+Coordinates=469,240,113,33
+
+[FDMemTableceps]
+Coordinates=341,277,101,33
+
+[FDMemTablenmprimeiro]
+Coordinates=674,252,135,33
+
+[FDMemTabledsdocumento]
+Coordinates=743,200,145,33
+
+[FDMemTablenmsegundo]
+Coordinates=535,277,136,33
+
+[BindSourceDB1]
+Coordinates=770,30,92,141
+
+[BindingsList1]
+Coordinates=0,0,82,33
 

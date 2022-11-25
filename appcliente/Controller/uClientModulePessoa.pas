@@ -31,7 +31,7 @@ type
     property InstanceOwner: Boolean read FInstanceOwner write FInstanceOwner;
     property WSPessoasClient: TWSPessoasClient read GetWSPessoasClient write FWSPessoasClient;
 
-    function Pessoa(const AID_Pessoa: Integer = 0): TFDObjList  ;
+    function Pessoa(const AID_Pessoa: Integer = 0; const A_Pagina: Integer = 1): TFDObjList  ;
     function AcceptPessoa(ModelPessoas: TModelPessoas): boolean ;
     function UpdatePessoa(ModelPessoas: TModelPessoas): boolean ;
     function CancelPessoa(ModelPessoas: TModelPessoas): boolean ;
@@ -110,14 +110,14 @@ begin
                            ModelPessoas.dtregistro  ]) ;
 end;
 
-function TClientModulePessoa.Pessoa(const AID_Pessoa: Integer): TFDObjList ;
+function TClientModulePessoa.Pessoa(const AID_Pessoa: Integer = 0; const A_Pagina: Integer = 1): TFDObjList ;
 var
   LDataSetList : TFDJSONDataSets  ;
   _MemTableLista : TFDObjList     ;
   _MemTablePessoas: TFDMemTable   ;
   _MemTableEndereco: TFDMemTable  ;
 begin
-  LDataSetList := WSPessoasClient.Pessoa(AID_Pessoa)  ;
+  LDataSetList := WSPessoasClient.Pessoa(AID_Pessoa,A_Pagina)  ;
   _MemTablePessoas := TFDMemTable.Create(nil) ;
   _MemTablePessoas.Close ;
   _MemTablePessoas.AppendData(TFDJSONDataSetsReader.GetListValue(LDataSetList, 0) ) ;

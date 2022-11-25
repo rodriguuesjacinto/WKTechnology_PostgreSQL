@@ -13,7 +13,8 @@ uses
   System.Bindings.Outputs, Fmx.Bind.Editors, Data.Bind.EngExt,
   Fmx.Bind.DBEngExt, Data.Bind.Components, Data.Bind.DBScope ,
   FireDAC.Comp.BatchMove.JSON, Data.FireDACJSONReflect, uClientModulePessoa,
-  System.ImageList, FMX.ImgList, StrUtils, System.JSON ;
+  System.ImageList, FMX.ImgList, StrUtils, System.JSON,
+  FireDAC.Comp.BatchMove.Text, FireDAC.Comp.BatchMove ;
 
 type
   TFormPessoas = class(TForm)
@@ -29,16 +30,22 @@ type
     ButtonLote: TButton;
     ProgressBarAtualizar: TProgressBar;
     LabelQtdRegistros: TLabel;
+    PanelPaginacao: TPanel;
+    ButtonPrior: TButton;
+    ButtonNext: TButton;
+    LabelPagina: TLabel;
     procedure ButtonNovoClick(Sender: TObject);
     procedure ButtonAlterarClick(Sender: TObject);
     procedure ButtonLoteClick(Sender: TObject);
     procedure ButtonExcluirClick(Sender: TObject);
     procedure ButtonAtualizarClick(Sender: TObject);
+    procedure ButtonNextClick(Sender: TObject);
+    procedure ButtonPriorClick(Sender: TObject);
   private
     { Private declarations }
     procedure TThreadEnd(Sender: TObject);
     procedure AddListPessoas(idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco : String) ;
-    procedure BuscaWSPessoas() ;
+    procedure BuscaWSPessoas(const _PaginaSelecionada : Integer = 1; const buscaGeral : Boolean = True) ;
   public
     { Public declarations }
 
@@ -60,8 +67,8 @@ begin
 
   ProgressBarAtualizar.Value   := 0 ;
   ProgressBarAtualizar.Visible := False ;
-  ButtonAtualizar.Enabled      := True ;
-  ListPessoas.Items.EndUpdate ;
+  ButtonAtualizar.Enabled      := True  ;
+  PanelPaginacao.Enabled       := True  ;
   LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count) ;
   ListPessoas.SetFocus  ;
 end;
@@ -81,16 +88,18 @@ begin
     end ;
 end;
 
-procedure TFormPessoas.BuscaWSPessoas;
+procedure TFormPessoas.BuscaWSPessoas(const _PaginaSelecionada : Integer = 1; const buscaGeral : Boolean = True ) ;
 var
    _TThread           : TThread ;
 begin
+  ListPessoas.Items.Clear            ;
+  ButtonAtualizar.Enabled  := False  ;
+  PanelPaginacao.Enabled   := False  ;
   _TThread := TThread.CreateAnonymousThread(procedure
   var
      _MemTablePessoas   : TFDMemTable ;
      _MemTableEndereco  : TFDMemTable ;
      _EnderecosIntegrado: String ;
-     _Pacotes            : Integer ;
      idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco : String ;
   begin
       try
@@ -98,16 +107,21 @@ begin
         _MemTableEndereco  := TFDMemTable.Create(nil)  ;
 
         _MemTablePessoas.Close ;
-        _MemTablePessoas := ClientModulePessoa.Pessoa()[0] ;
+        _MemTablePessoas := ClientModulePessoa.Pessoa(0,_PaginaSelecionada)[0] ;
         _MemTablePessoas.Open ;
 
         _MemTableEndereco.Close ;
-        _MemTableEndereco := ClientModulePessoa.Pessoa()[1] ;
+        _MemTableEndereco := ClientModulePessoa.Pessoa(0,_PaginaSelecionada)[1] ;
         _MemTableEndereco.Open  ;
 
-        _Pacotes :=  _MemTablePessoas.RecordCount ;
-        _Pacotes :=  Trunc(((_MemTablePessoas.RecordCount / 50) + 1)) ;
-        if _Pacotes <= 1 then  _Pacotes :=  10 ;
+         //paginação
+         if buscaGeral then
+         begin
+             PanelPaginacao.Tag := _MemTablePessoas.FieldByName('nTotalRegistros').AsInteger  ;
+             PanelPaginacao.Tag := Trunc(PanelPaginacao.Tag / 1000 + 1) ;
+             LabelPagina.Tag    := 1 ;
+             LabelPagina.Text := 'pagina ' + FormatFloat('00',LabelPagina.Tag) + ' de ' + FormatFloat('00',PanelPaginacao.Tag) ;
+         end ;
 
         while not _MemTablePessoas.Eof do
         begin
@@ -153,16 +167,6 @@ begin
              AddListPessoas(idpessoa,f1natureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro,endereco) ;
            end) ;
 
-           if _MemTablePessoas.RecordCount = _Pacotes then
-           begin
-               TThread.Synchronize(nil , procedure
-               begin
-                  ListPessoas.Items.EndUpdate  ;
-                  LabelQtdRegistros.Text := 'Número de Pessoas Listadas: ' + FormatFloat('00000',ListPessoas.Items.Count) ;
-                  ListPessoas.Items.BeginUpdate ;
-               end) ;
-           end;
-
            _MemTablePessoas.Next ;
         end ;
       finally
@@ -176,10 +180,7 @@ end;
 
 procedure TFormPessoas.ButtonAtualizarClick(Sender: TObject);
 begin
-  ListPessoas.Items.BeginUpdate      ;
-  ListPessoas.Items.Clear            ;
-  ButtonAtualizar.Enabled  := False  ;
-  BuscaWSPessoas                     ;
+  BuscaWSPessoas ;                     ;
 end;
 
 procedure TFormPessoas.ButtonAlterarClick(Sender: TObject);
@@ -269,6 +270,16 @@ begin
   end;
 end;
 
+procedure TFormPessoas.ButtonNextClick(Sender: TObject);
+begin
+   if PanelPaginacao.Tag = LabelPagina.Tag then
+      exit ;
+
+   LabelPagina.Tag := LabelPagina.Tag + 1 ;
+   LabelPagina.Text := 'pagina ' + FormatFloat('00',LabelPagina.Tag) + ' de ' + FormatFloat('00',PanelPaginacao.Tag) ;
+   BuscaWSPessoas(LabelPagina.Tag,False) ;
+end;
+
 procedure TFormPessoas.ButtonNovoClick(Sender: TObject);
 begin
   FormPessoaEdit := TFormPessoaEdit.create ( nil );
@@ -279,6 +290,16 @@ begin
   finally
     FreeAndNil(FormPessoaEdit)
   end;
+end;
+
+procedure TFormPessoas.ButtonPriorClick(Sender: TObject);
+begin
+   if LabelPagina.Tag = 1 then
+      exit ;
+
+   LabelPagina.Tag := LabelPagina.Tag - 1 ;
+   LabelPagina.Text := 'pagina ' + FormatFloat('00',LabelPagina.Tag) + ' de ' + FormatFloat('00',PanelPaginacao.Tag) ;
+   BuscaWSPessoas(LabelPagina.Tag,False) ;
 end;
 
 end.

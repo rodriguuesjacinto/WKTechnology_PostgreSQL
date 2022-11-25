@@ -15,6 +15,7 @@ type
       Fdtregistro : TDate   ;
       Fdscep      : TObjectList<TModelEndereco> ;
       FEnumerador : TEnumerador;
+      Fpagina: Integer;
 
 
   public
@@ -26,6 +27,7 @@ type
       property dtregistro   : TDate                          read  Fdtregistro  write Fdtregistro   ;
       property dscep        : TObjectList<TModelEndereco>    read  Fdscep       write Fdscep        ;
       property enuTipo      : TEnumerador                    read  FEnumerador  write FEnumerador   ;
+      property pagina       : Integer                        read  Fpagina      write Fpagina       ;
 
       constructor Create;
       destructor destroy; override;

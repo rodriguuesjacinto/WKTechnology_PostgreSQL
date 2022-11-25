@@ -38,3 +38,6 @@ Coordinates=379,1,78,36
 LayerNames=
 Visible=False
 
+[FormPessoaLote.FDMemTable]
+Visible=False
+

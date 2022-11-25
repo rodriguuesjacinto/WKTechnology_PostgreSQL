@@ -18,13 +18,13 @@ object FormPessoaLoteExemplo: TFormPessoaLoteExemplo
     DataDetectorTypes = []
     Lines.Strings = (
       
-        '000.000.000-00;ROBERTO;RODRIGUES JACINTO;87520-000;87120-000;879' +
+        '000.000.000-00;ROBERTO;RODRIGUES JACINTO;87520-000|87120-000|879' +
         '65-369'
       
-        '111.111.111-11;ROBERTO;RODRIGUES JACINTO;87520-000;87120-000;879' +
-        '65-369;25896-326'
-      '222.222.222-22;ROBERTO;RODRIGUES JACINTO;87520-000;'
-      '333.333.333-33;ROBERTO;RODRIGUES JACINTO;87520-000;87120-000')
+        '111.111.111-11;ROBERTO;RODRIGUES JACINTO;87520-000|87120-000|879' +
+        '65-369|25896-326'
+      '222.222.222-22;ROBERTO;RODRIGUES JACINTO;87520-000'
+      '333.333.333-33;ROBERTO;RODRIGUES JACINTO;87520-000|87120-000')
     ReadOnly = True
     StyledSettings = [Family, FontColor]
     TextSettings.Font.Size = 24.000000000000000000
@@ -77,7 +77,7 @@ object FormPessoaLoteExemplo: TFormPessoaLoteExemplo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       Text = 
         'Documento (CPF ou CNPJ ); Primeiro Nome;Segundo Nome            ' +
-        '                    ; ceps pode ser varios separados por ;'
+        '                    ; ceps pode ser varios separados por |'
       TabOrder = 0
     end
   end

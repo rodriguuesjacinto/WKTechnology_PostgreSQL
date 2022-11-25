@@ -1,0 +1,239 @@
+//
+// Created by the DataSnap proxy generator.
+// 22/11/2022 09:54:29
+//
+
+unit uClientClassesPessoa;
+
+interface
+
+uses System.JSON, Datasnap.DSProxyRest, Datasnap.DSClientRest, Data.DBXCommon, Data.DBXClient, Data.DBXDataSnap, Data.DBXJSON, Datasnap.DSProxy, System.Classes, System.SysUtils, Data.DB, Data.SqlExpr, Data.DBXDBReaders, Data.DBXCDSReaders, Data.FireDACJSONReflect, Data.DBXJSONReflect;
+
+type
+
+  IDSRestCachedTFDJSONDataSets = interface;
+
+  TWSPessoasClient = class(TDSAdminRestClient)
+  private
+    FPessoaCommand: TDSRestCommand;
+    FPessoaCommand_Cache: TDSRestCommand;
+    FAcceptPessoaCommand: TDSRestCommand;
+    FUpdatePessoaCommand: TDSRestCommand;
+    FCancelPessoaCommand: TDSRestCommand;
+    FLotePessoaCommand: TDSRestCommand;
+  public
+    constructor Create(ARestConnection: TDSRestConnection); overload;
+    constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
+    destructor Destroy; override;
+    function Pessoa(AID_Pessoa: Integer; const ARequestFilter: string = ''): TFDJSONDataSets;
+    function Pessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string = ''): IDSRestCachedTFDJSONDataSets;
+    procedure AcceptPessoa(LDataSetList: TFDJSONDataSets);
+    procedure UpdatePessoa(LDataSetList: TFDJSONDataSets);
+    procedure CancelPessoa(LDataSetList: TFDJSONDataSets);
+    procedure LotePessoa(LDataSetList: TFDJSONDataSets);
+  end;
+
+  IDSRestCachedTFDJSONDataSets = interface(IDSRestCachedObject<TFDJSONDataSets>)
+  end;
+
+  TDSRestCachedTFDJSONDataSets = class(TDSRestCachedObject<TFDJSONDataSets>, IDSRestCachedTFDJSONDataSets, IDSRestCachedCommand)
+  end;
+
+const
+  TWSPessoas_Pessoa: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TFDJSONDataSets')
+  );
+
+  TWSPessoas_Pessoa_Cache: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'AID_Pessoa'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+  TWSPessoas_AcceptPessoa: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: 'LDataSetList'; Direction: 1; DBXType: 37; TypeName: 'TFDJSONDataSets')
+  );
+
+  TWSPessoas_UpdatePessoa: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: 'LDataSetList'; Direction: 1; DBXType: 37; TypeName: 'TFDJSONDataSets')
+  );
+
+  TWSPessoas_CancelPessoa: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: 'LDataSetList'; Direction: 1; DBXType: 37; TypeName: 'TFDJSONDataSets')
+  );
+
+  TWSPessoas_LotePessoa: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: 'LDataSetList'; Direction: 1; DBXType: 37; TypeName: 'TFDJSONDataSets')
+  );
+
+implementation
+
+function TWSPessoasClient.Pessoa(AID_Pessoa: Integer; const ARequestFilter: string): TFDJSONDataSets;
+begin
+  if FPessoaCommand = nil then
+  begin
+    FPessoaCommand := FConnection.CreateCommand;
+    FPessoaCommand.RequestType := 'GET';
+    FPessoaCommand.Text := 'TWSPessoas.Pessoa';
+    FPessoaCommand.Prepare(TWSPessoas_Pessoa);
+  end;
+  FPessoaCommand.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FPessoaCommand.Execute(ARequestFilter);
+  if not FPessoaCommand.Parameters[1].Value.IsNull then
+  begin
+    FUnMarshal := TDSRestCommand(FPessoaCommand.Parameters[1].ConnectionHandler).GetJSONUnMarshaler;
+    try
+      Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FPessoaCommand.Parameters[1].Value.GetJSONValue(True)));
+      if FInstanceOwner then
+        FPessoaCommand.FreeOnExecute(Result);
+    finally
+      FreeAndNil(FUnMarshal)
+    end
+  end
+  else
+    Result := nil;
+end;
+
+function TWSPessoasClient.Pessoa_Cache(AID_Pessoa: Integer; const ARequestFilter: string): IDSRestCachedTFDJSONDataSets;
+begin
+  if FPessoaCommand_Cache = nil then
+  begin
+    FPessoaCommand_Cache := FConnection.CreateCommand;
+    FPessoaCommand_Cache.RequestType := 'GET';
+    FPessoaCommand_Cache.Text := 'TWSPessoas.Pessoa';
+    FPessoaCommand_Cache.Prepare(TWSPessoas_Pessoa_Cache);
+  end;
+  FPessoaCommand_Cache.Parameters[0].Value.SetInt32(AID_Pessoa);
+  FPessoaCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedTFDJSONDataSets.Create(FPessoaCommand_Cache.Parameters[1].Value.GetString);
+end;
+
+procedure TWSPessoasClient.AcceptPessoa(LDataSetList: TFDJSONDataSets);
+begin
+  if FAcceptPessoaCommand = nil then
+  begin
+    FAcceptPessoaCommand := FConnection.CreateCommand;
+    FAcceptPessoaCommand.RequestType := 'POST';
+    FAcceptPessoaCommand.Text := 'TWSPessoas."AcceptPessoa"';
+    FAcceptPessoaCommand.Prepare(TWSPessoas_AcceptPessoa);
+  end;
+  if not Assigned(LDataSetList) then
+    FAcceptPessoaCommand.Parameters[0].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FAcceptPessoaCommand.Parameters[0].ConnectionHandler).GetJSONMarshaler;
+    try
+      FAcceptPessoaCommand.Parameters[0].Value.SetJSONValue(FMarshal.Marshal(LDataSetList), True);
+      if FInstanceOwner then
+        LDataSetList.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FAcceptPessoaCommand.Execute;
+end;
+
+procedure TWSPessoasClient.UpdatePessoa(LDataSetList: TFDJSONDataSets);
+begin
+  if FUpdatePessoaCommand = nil then
+  begin
+    FUpdatePessoaCommand := FConnection.CreateCommand;
+    FUpdatePessoaCommand.RequestType := 'POST';
+    FUpdatePessoaCommand.Text := 'TWSPessoas."UpdatePessoa"';
+    FUpdatePessoaCommand.Prepare(TWSPessoas_UpdatePessoa);
+  end;
+  if not Assigned(LDataSetList) then
+    FUpdatePessoaCommand.Parameters[0].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FUpdatePessoaCommand.Parameters[0].ConnectionHandler).GetJSONMarshaler;
+    try
+      FUpdatePessoaCommand.Parameters[0].Value.SetJSONValue(FMarshal.Marshal(LDataSetList), True);
+      if FInstanceOwner then
+        LDataSetList.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FUpdatePessoaCommand.Execute;
+end;
+
+procedure TWSPessoasClient.CancelPessoa(LDataSetList: TFDJSONDataSets);
+begin
+  if FCancelPessoaCommand = nil then
+  begin
+    FCancelPessoaCommand := FConnection.CreateCommand;
+    FCancelPessoaCommand.RequestType := 'POST';
+    FCancelPessoaCommand.Text := 'TWSPessoas."CancelPessoa"';
+    FCancelPessoaCommand.Prepare(TWSPessoas_CancelPessoa);
+  end;
+  if not Assigned(LDataSetList) then
+    FCancelPessoaCommand.Parameters[0].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FCancelPessoaCommand.Parameters[0].ConnectionHandler).GetJSONMarshaler;
+    try
+      FCancelPessoaCommand.Parameters[0].Value.SetJSONValue(FMarshal.Marshal(LDataSetList), True);
+      if FInstanceOwner then
+        LDataSetList.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FCancelPessoaCommand.Execute;
+end;
+
+procedure TWSPessoasClient.LotePessoa(LDataSetList: TFDJSONDataSets);
+begin
+  if FLotePessoaCommand = nil then
+  begin
+    FLotePessoaCommand := FConnection.CreateCommand;
+    FLotePessoaCommand.RequestType := 'POST';
+    FLotePessoaCommand.Text := 'TWSPessoas."LotePessoa"';
+    FLotePessoaCommand.Prepare(TWSPessoas_LotePessoa);
+  end;
+  if not Assigned(LDataSetList) then
+    FLotePessoaCommand.Parameters[0].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FLotePessoaCommand.Parameters[0].ConnectionHandler).GetJSONMarshaler;
+    try
+      FLotePessoaCommand.Parameters[0].Value.SetJSONValue(FMarshal.Marshal(LDataSetList), True);
+      if FInstanceOwner then
+        LDataSetList.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FLotePessoaCommand.Execute;
+end;
+
+constructor TWSPessoasClient.Create(ARestConnection: TDSRestConnection);
+begin
+  inherited Create(ARestConnection);
+end;
+
+constructor TWSPessoasClient.Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean);
+begin
+  inherited Create(ARestConnection, AInstanceOwner);
+end;
+
+destructor TWSPessoasClient.Destroy;
+begin
+  FPessoaCommand.DisposeOf;
+  FPessoaCommand_Cache.DisposeOf;
+  FAcceptPessoaCommand.DisposeOf;
+  FUpdatePessoaCommand.DisposeOf;
+  FCancelPessoaCommand.DisposeOf;
+  FLotePessoaCommand.DisposeOf;
+  inherited;
+end;
+
+end.
+

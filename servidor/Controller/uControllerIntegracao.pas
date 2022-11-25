@@ -55,6 +55,7 @@ var
   Query : TFDQuery ;
 begin
   NameThreadForDebugging('uControllerIntegracao');
+
   Query := selecionarCepsNaoIntegrados ;
   try
       Query.Open ;

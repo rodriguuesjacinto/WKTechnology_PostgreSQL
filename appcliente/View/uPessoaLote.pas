@@ -12,7 +12,14 @@ uses
   FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uModelPessoas, uModelEndereco, FireDAC.Stan.Async, System.Generics.Collections;
+  FireDAC.Comp.Client, uModelPessoas, uModelEndereco, FireDAC.Stan.Async, System.Generics.Collections,
+  FireDAC.Comp.BatchMove.DataSet, FireDAC.Comp.BatchMove,
+  FireDAC.Comp.BatchMove.Text, System.Rtti, System.Bindings.Outputs,
+  Fmx.Bind.Editors, Data.Bind.EngExt, Fmx.Bind.DBEngExt, Data.Bind.Components,
+  Data.Bind.DBScope, FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
+  FireDAC.Phys, FireDAC.VCLUI.Login, FireDAC.VCLUI.Error, FireDAC.VCLUI.Wait,
+  FireDAC.VCLUI.Async, FireDAC.Comp.UI, FireDAC.Phys.MongoDBDef,
+  FireDAC.Phys.MongoDB;
 
 type
   TFormPessoaLote = class(TForm)
@@ -25,25 +32,33 @@ type
     EditPathArquivo: TEdit;
     Button_arquivo: TButton;
     ImageList1: TImageList;
-    ProgressBar_arquivo: TProgressBar;
-    Label_progresso: TLabel;
     OpenArquivo: TOpenDialog;
     ButtonExportaLote: TButton;
     ButtoVerificar: TButton;
     SpeedButton1: TSpeedButton;
+    FDBatchMove: TFDBatchMove;
+    FDBatchMoveTextReader: TFDBatchMoveTextReader;
+    FDBatchMoveDataSetWriter: TFDBatchMoveDataSetWriter;
+    FDMemTable: TFDMemTable;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    FDMemTabledsdocumento: TStringField;
+    FDMemTablenmprimeiro: TStringField;
+    FDMemTablenmsegundo: TStringField;
+    FDMemTableceps: TStringField;
+    BindSourceDB1: TBindSourceDB;
+    BindingsList1: TBindingsList;
+    LinkListControlToField1: TLinkListControlToField;
+    TimerTempo: TTimer;
+    LabelTempo: TLabel;
     procedure Button_arquivoClick(Sender: TObject);
-    procedure MontaListaArquivo(const _Path_ArquivoLote : string) ;
-    procedure AddListViewArquivo(const dsdocumento, nmprimeiro, nmsegundo, ceps : string) ;
+    procedure MontaListaArquivo() ;
     procedure ButtoVerificarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure ButtonExportaLoteClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
+    procedure TimerTempoTimer(Sender: TObject);
   private
     { Private declarations }
-    function ValidaDados(const dsdocumento, nmprimeiro, nmsegundo, ceps : string): Boolean ;
-    function GetStrNumber(const S: string): string;
-    procedure TThreadEnd(Sender: TObject);
 
   public
     { Public declarations }
@@ -51,70 +66,37 @@ type
 
 var
   FormPessoaLote : TFormPessoaLote;
-  ListaMemTableIntegrar  : TObjectList<TFDMemTable>       ;
-  LDataSetListLote       : TFDJSONDataSets                ;
-  _MemTableIntegrar      : TFDMemTable                    ;
+
 implementation
 
 {$R *.fmx}
 
 uses uPessoaLoteExemplo;
 
-function TFormPessoaLote.GetStrNumber(const S: string): string;
-var
-  vText : PChar;
-begin
-  vText := PChar(S);
-  Result := '';
-
-  while (vText^ <> #0) do
-  begin
-    {$IFDEF UNICODE}
-    if CharInSet(vText^, ['0'..'9']) then
-    {$ELSE}
-    if vText^ in ['0'..'9'] then
-    {$ENDIF}
-      Result := Result + vText^;
-
-    Inc(vText);
-  end;
-end;
-
-function TFormPessoaLote.ValidaDados(const dsdocumento, nmprimeiro, nmsegundo,
-  ceps: string): Boolean;
-begin
-
-   result := true ;
-end;
-
-
-procedure TFormPessoaLote.AddListViewArquivo(const dsdocumento, nmprimeiro,
-  nmsegundo, ceps: string);
-begin
-  with ListViewArquivo.Items.Add do
-  begin
-     TListItemText(Objects.FindDrawable('dsdocumento')).Text  :=  dsdocumento ;
-     TListItemText(Objects.FindDrawable('nmprimeiro')).Text   :=  nmprimeiro  ;
-     TListItemText(Objects.FindDrawable('nmsegundo')).Text    :=  nmsegundo   ;
-     TListItemText(Objects.FindDrawable('ceps')).Text         :=  ceps        ;
-   end;
-end;
-
 procedure TFormPessoaLote.ButtonExportaLoteClick(Sender: TObject);
+var
+   LDataSetListLote  : TFDJSONDataSets   ;
 begin
+   if FDMemTable.RecordCount = 0 then
+     exit ;
 
-   if ClientModulePessoa.LotePessoa(LDataSetListLote) then
-   begin
-      ShowMessage('Atenção! '+#13+'Pacote de Arquivo enviado para o Servidor.') ;
-      ListaMemTableIntegrar.Clear ;
-      ListViewArquivo.Items.Clear ;
-      EditPathArquivo.Text := ''  ;
-      ProgressBar_arquivo.Value := 0 ;
-      Label_progresso.Text      := 'Verificando estrutura do arquivo ...'   ;
-   end
-   else
-      ShowMessage('Atenção! '+#13+'Err ao enviar Pacote de Arquivo para o Servidor.') ;
+   try
+     LDataSetListLote      := TFDJSONDataSets.Create ;
+     TFDJSONDataSetsWriter.ListAdd(LDataSetListLote,FDMemTable)  ;
 
+     ButtonExportaLote.Enabled := False ;
+
+     if ClientModulePessoa.LotePessoa(LDataSetListLote) then
+     begin
+        ShowMessage('Atenção! '+#13+'Pacote de Arquivo enviado para o Servidor.') ;
+        FDMemTable.EmptyDataSet     ;
+        EditPathArquivo.Text := ''  ;
+     end
+     else
+        ShowMessage('Atenção! '+#13+'Erro ao enviar Pacote de Arquivo para o Servidor.') ;
+   finally
+     ButtonExportaLote.Enabled := True ;
+   end;
 end;
 
 procedure TFormPessoaLote.Button_arquivoClick(Sender: TObject);
@@ -125,13 +107,45 @@ begin
       EditPathArquivo.Text := '' ;
 end;
 
+procedure TFormPessoaLote.MontaListaArquivo() ;
+begin
+  try
+
+      with FDBatchMove do begin
+        Mode := dmAlwaysInsert;
+        Options := [poClearDest];
+      end;
+
+      with TFDBatchMoveTextReader.Create(FDBatchMove) do begin
+        FileName := EditPathArquivo.Text  ;
+        DataDef.Separator := ';';
+        DataDef.WithFieldNames := False;
+      end;
+
+      with TFDBatchMoveDataSetWriter.Create(FDBatchMove) do begin
+        DataSet := FDMemTable ;
+        Optimise := False;
+      end;
+
+      FDBatchMove.GuessFormat;
+      FDBatchMove.Execute;
+      FDMemTable.Open;
+
+  finally
+      LabelTempo.visible := False ;
+      TimerTempo.Enabled := False ;
+      ButtonExportaLote.Enabled := True ;
+  end;
+end ;
+
+
 procedure TFormPessoaLote.ButtoVerificarClick(Sender: TObject);
 begin
     if FileExists(EditPathArquivo.Text) then
     begin
-      ListViewArquivo.BeginUpdate ;
-        MontaListaArquivo(EditPathArquivo.Text) ;
-      ListViewArquivo.EndUpdate   ;
+        TimerTempo.Enabled := True ;
+        LabelTempo.visible := True ;
+        MontaListaArquivo ;
     end
     else
       ShowMessage('Atenção! '+#13+'Arquivo não encontrado.') ;
@@ -139,129 +153,7 @@ end;
 
 procedure TFormPessoaLote.FormCreate(Sender: TObject);
 begin
-    LDataSetListLote      := TFDJSONDataSets.Create ;
-    ListaMemTableIntegrar :=  TObjectList<TFDMemTable>.Create ;
-end;
-
-procedure TFormPessoaLote.FormDestroy(Sender: TObject);
-begin
-   FreeAndNil(LDataSetListLote)          ;
-   FreeAndNil(ListaMemTableIntegrar) ;
-end;
-
-procedure TFormPessoaLote.TThreadEnd(Sender: TObject);
-begin
-  if Assigned(TThread(Sender).FatalException) then
-  begin
-    ShowMessage('Atenção! '+#13+'Erro ao Carregar os Dados! Não Foi Possivel carregar os Dados ' +
-                 Exception(TThread(Sender).FatalException).Message
-               );
-    Label_progresso.Text      := 'Erro ao Carregar os Dados! Não Foi Possivel carregar os Dados.' ;
-  end
-  else
-  begin
-    Label_progresso.Text      := 'Arquivo preparado para envio em lote.{ Total de registros :'+ FormatFloat('00000',ProgressBar_arquivo.Max) +'}' + ' Número de Pacotes : ' + FormatFloat('000',ListaMemTableIntegrar.Count ) ;
-    ButtonExportaLote.Enabled := True ;
-  end ;
-end;
-
-procedure TFormPessoaLote.MontaListaArquivo(const _Path_ArquivoLote: string);
-var
-  _TThread           : TThread ;
-begin
-  _TThread := TThread.CreateAnonymousThread(procedure
-  var
-      I, J , _Pacotes : Integer ;
-      LinhaDados , Arquivo : TStringList ;
-      dsdocumento, nmprimeiro, nmsegundo, ceps: string ;
-  begin
-      try
-          ListaMemTableIntegrar.Clear ;
-          ListViewArquivo.Items.Clear ;
-
-          Arquivo           := TStringList.Create;
-          LinhaDados        := TStringList.Create;
-          _MemTableIntegrar := TFDMemTable.Create(nil);
-          begin
-              _MemTableIntegrar.Close ;
-              _MemTableIntegrar.FieldDefs.Add('dsdocumento' , ftString, 20 , false)  ;
-              _MemTableIntegrar.FieldDefs.Add('nmprimeiro'  , ftString, 100, false)  ;
-              _MemTableIntegrar.FieldDefs.Add('nmsegundo'   , ftString, 100, false)  ;
-              _MemTableIntegrar.FieldDefs.Add('ceps'        , ftString, 200, false)  ;
-              _MemTableIntegrar.CreateDataset;
-              _MemTableIntegrar.Open ;
-          end;
-
-          Arquivo.LoadFromFile(_Path_ArquivoLote);
-
-          TThread.Synchronize(nil , procedure
-          begin
-              ButtonExportaLote.Enabled := False ;
-              ProgressBar_arquivo.Max   := Arquivo.Count ;
-          end ) ;
-
-          _Pacotes :=  Trunc(((Arquivo.Count / 50) + 1)) ;
-          if _Pacotes <= 1 then  _Pacotes := 25 ;
-
-          for I := 0 to Arquivo.Count -1 do
-          begin
-              LinhaDados.Clear ;
-              ExtractStrings([';'], [], PChar(Arquivo[I]), LinhaDados);
-
-              dsdocumento := GetStrNumber(copy(LinhaDados[0],0,20))  ;
-              nmprimeiro  := UTF8ToString(copy(LinhaDados[1],0,100)) ;
-              nmsegundo   := UTF8ToString(copy(LinhaDados[2],0,100)) ;
-              ceps        := '' ;
-              for J := 3 to LinhaDados.Count -1 do
-                  ceps    := ceps + IfThen(ceps = '','','|') +  copy(GetStrNumber(LinhaDados[J]),0,5)+'-'+copy(GetStrNumber(LinhaDados[J]),5,3)  ;
-
-              //desenvolver função para verificar integridade de dados
-              if ValidaDados( dsdocumento, nmprimeiro, nmsegundo, ceps ) then
-              begin
-                  //Preparo os Objetos para enviar para o servidor
-                  _MemTableIntegrar.InsertRecord([  dsdocumento, nmprimeiro, nmsegundo, ceps  ]) ;
-              end ;
-
-
-              if _MemTableIntegrar.RecordCount = _Pacotes then
-              begin
-                 ListaMemTableIntegrar.Add(TFDMemTable.Create(nil))        ;
-                 ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].AppendData(_MemTableIntegrar)    ;
-                 ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].open ;
-                 TFDJSONDataSetsWriter.ListAdd(LDataSetListLote,ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1])  ;
-                 _MemTableIntegrar.EmptyDataSet ;
-              end;
-
-
-              TThread.Synchronize(nil , procedure
-              begin
-                AddListViewArquivo(dsdocumento, nmprimeiro, nmsegundo, ceps) ;
-                ProgressBar_arquivo.Value := I + 1 ;
-                Label_progresso.Text      := 'Verificando registros ' + FormatFloat('00000',I) + ' de ' + FormatFloat('00000',Arquivo.Count-1) + ' .' ;
-                Application.ProcessMessages ;
-              end) ;
-
-          end;
-
-
-          if _MemTableIntegrar.RecordCount > 0 then
-          begin
-             ListaMemTableIntegrar.Add(TFDMemTable.Create(nil))        ;
-             ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].AppendData(_MemTableIntegrar)    ;
-             ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1].open ;
-             TFDJSONDataSetsWriter.ListAdd(LDataSetListLote,ListaMemTableIntegrar[ListaMemTableIntegrar.Count-1])  ;
-          end ;
-
-      finally
-        FreeAndNil(LinhaDados) ;
-        FreeAndNil(Arquivo) ;
-        FreeAndNil(_MemTableIntegrar) ;
-      end;
-
-  end) ;
-
-  _TThread.OnTerminate := TThreadEnd ;
-  _TThread.Start ;
+    LabelTempo.visible    := False ;
 end;
 
 procedure TFormPessoaLote.SpeedButton1Click(Sender: TObject);
@@ -272,6 +164,12 @@ begin
   finally
     FreeAndNil(FormPessoaLoteExemplo)
   end;
+end;
+
+procedure TFormPessoaLote.TimerTempoTimer(Sender: TObject);
+begin
+   LabelTempo.Text :=  IntToStr((strtoint(LabelTempo.Text) + 1))  ;
+   Application.ProcessMessages ;
 end;
 
 end.

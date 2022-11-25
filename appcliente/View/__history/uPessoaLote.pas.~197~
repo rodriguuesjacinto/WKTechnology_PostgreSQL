@@ -1,0 +1,174 @@
+unit uPessoaLote;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView.Types,
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.Edit,
+  System.ImageList, FMX.ImgList, StrUtils , uClientModulePessoa,
+  FireDAC.Comp.BatchMove.JSON, Data.FireDACJSONReflect, FireDAC.DApt ,
+  FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, uModelPessoas, uModelEndereco, FireDAC.Stan.Async, System.Generics.Collections,
+  FireDAC.Comp.BatchMove.DataSet, FireDAC.Comp.BatchMove,
+  FireDAC.Comp.BatchMove.Text, System.Rtti, System.Bindings.Outputs,
+  Fmx.Bind.Editors, Data.Bind.EngExt, Fmx.Bind.DBEngExt, Data.Bind.Components,
+  Data.Bind.DBScope, FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
+  FireDAC.Phys, FireDAC.VCLUI.Login, FireDAC.VCLUI.Error, FireDAC.VCLUI.Wait,
+  FireDAC.VCLUI.Async, FireDAC.Comp.UI, FireDAC.Phys.MongoDBDef,
+  FireDAC.Phys.MongoDB;
+
+type
+  TFormPessoaLote = class(TForm)
+    StatusBar1: TStatusBar;
+    PanelTop: TPanel;
+    PanelCentro: TPanel;
+    Label1: TLabel;
+    ListViewArquivo: TListView;
+    Label2: TLabel;
+    EditPathArquivo: TEdit;
+    Button_arquivo: TButton;
+    ImageList1: TImageList;
+    OpenArquivo: TOpenDialog;
+    ButtonExportaLote: TButton;
+    ButtoVerificar: TButton;
+    SpeedButton1: TSpeedButton;
+    FDBatchMove: TFDBatchMove;
+    FDBatchMoveTextReader: TFDBatchMoveTextReader;
+    FDBatchMoveDataSetWriter: TFDBatchMoveDataSetWriter;
+    FDMemTable: TFDMemTable;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    FDMemTabledsdocumento: TStringField;
+    FDMemTablenmprimeiro: TStringField;
+    FDMemTablenmsegundo: TStringField;
+    FDMemTableceps: TStringField;
+    BindSourceDB1: TBindSourceDB;
+    BindingsList1: TBindingsList;
+    LinkListControlToField1: TLinkListControlToField;
+    TimerTempo: TTimer;
+    LabelTempo: TLabel;
+    procedure Button_arquivoClick(Sender: TObject);
+    procedure MontaListaArquivo() ;
+    procedure ButtoVerificarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure ButtonExportaLoteClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure TimerTempoTimer(Sender: TObject);
+  private
+    { Private declarations }
+
+  public
+    { Public declarations }
+  end;
+
+var
+  FormPessoaLote : TFormPessoaLote;
+
+implementation
+
+{$R *.fmx}
+
+uses uPessoaLoteExemplo;
+
+procedure TFormPessoaLote.ButtonExportaLoteClick(Sender: TObject);
+var
+   LDataSetListLote  : TFDJSONDataSets   ;
+begin
+   if FDMemTable.RecordCount = 0 then
+     exit ;
+
+   try
+     LDataSetListLote      := TFDJSONDataSets.Create ;
+      TFDJSONDataSetsWriter.ListAdd(LDataSetListLote,FDMemTable)  ;
+     ButtonExportaLote.Enabled := False ;
+
+     if ClientModulePessoa.LotePessoa(LDataSetListLote) then
+     begin
+        ShowMessage('Atenção! '+#13+'Pacote de Arquivo enviado para o Servidor.') ;
+        ListViewArquivo.Items.Clear ;
+        EditPathArquivo.Text := ''  ;
+     end
+     else
+        ShowMessage('Atenção! '+#13+'Erro ao enviar Pacote de Arquivo para o Servidor.') ;
+   finally
+     ButtonExportaLote.Enabled := True ;
+     FreeAndNil(LDataSetListLote)          ;
+   end;
+end;
+
+procedure TFormPessoaLote.Button_arquivoClick(Sender: TObject);
+begin
+   if OpenArquivo.Execute then
+      EditPathArquivo.Text := OpenArquivo.FileName
+   else
+      EditPathArquivo.Text := '' ;
+end;
+
+procedure TFormPessoaLote.MontaListaArquivo() ;
+begin
+  try
+      TimerTempo.Enabled := True ;
+      LabelTempo.visible := True ;
+
+      with FDBatchMove do begin
+        Mode := dmAlwaysInsert;
+        Options := [poClearDest];
+      end;
+
+      with TFDBatchMoveTextReader.Create(FDBatchMove) do begin
+        FileName := EditPathArquivo.Text  ;
+        DataDef.Separator := ';';
+        DataDef.WithFieldNames := False;
+      end;
+
+      with TFDBatchMoveDataSetWriter.Create(FDBatchMove) do begin
+        DataSet := FDMemTable ;
+        Optimise := False;
+      end;
+
+      FDBatchMove.GuessFormat;
+      FDBatchMove.Execute;
+      FDMemTable.Open;
+
+  finally
+      LabelTempo.visible := False ;
+      TimerTempo.Enabled := False ;
+      ButtonExportaLote.Enabled := True ;
+  end;
+end ;
+
+
+procedure TFormPessoaLote.ButtoVerificarClick(Sender: TObject);
+begin
+    if FileExists(EditPathArquivo.Text) then
+    begin
+        MontaListaArquivo ;
+    end
+    else
+      ShowMessage('Atenção! '+#13+'Arquivo não encontrado.') ;
+end;
+
+procedure TFormPessoaLote.FormCreate(Sender: TObject);
+begin
+    LabelTempo.visible    := False ;
+end;
+
+procedure TFormPessoaLote.SpeedButton1Click(Sender: TObject);
+begin
+  FormPessoaLoteExemplo := TFormPessoaLoteExemplo.create ( nil );
+  try
+    FormPessoaLoteExemplo.ShowModal ;
+  finally
+    FreeAndNil(FormPessoaLoteExemplo)
+  end;
+end;
+
+procedure TFormPessoaLote.TimerTempoTimer(Sender: TObject);
+begin
+   LabelTempo.Text :=  IntToStr((strtoint(LabelTempo.Text) + 1))  ;
+end;
+
+end.

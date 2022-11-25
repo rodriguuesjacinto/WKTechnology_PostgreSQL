@@ -126,12 +126,15 @@ end;
 function TDAOPessoas.selecionar(ModelPessoas : TModelPessoas): TFDQuery;
 var
   QuerySelecionar : TFDQuery ;
+  nTotalRegistros : Integer  ;
 begin
   QuerySelecionar := TControllerConexao.getInstance.daoConexao.criarQrery;
+  QuerySelecionar.Open('select count(*) as nTotalRegistros from pessoa') ;
+  nTotalRegistros := QuerySelecionar.FieldByName('nTotalRegistros').AsInteger ;
   if ModelPessoas.idpessoa > 0   then
-     QuerySelecionar.Open('select * from pessoa where idclientes = :idclientes',[ModelPessoas.idpessoa])
+     QuerySelecionar.Open('select * , 1 as nTotalRegistros from pessoa where idclientes = :idclientes',[ModelPessoas.idpessoa])
   else
-     QuerySelecionar.Open('select * from pessoa') ;
+     QuerySelecionar.Open('select * , :nTotalRegistros as nTotalRegistros from pessoa LIMIT 1000 OFFSET((:pagina -1) * 1000)',[nTotalRegistros , ModelPessoas.pagina]) ;
   result := QuerySelecionar ;
 end;
 
